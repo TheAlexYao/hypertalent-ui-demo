@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { FileText, Download, MessageSquare, Users, Calendar } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { FileText, Download, MessageSquare, Users, Calendar, Mic, MicOff, Search, History } from "lucide-react"
 import { useState } from "react"
 import type { UploadedFile } from "../file-upload-zone"
 
@@ -13,6 +14,39 @@ interface ChatResultsPanelProps {
   files: UploadedFile[]
   onFilesChange: (files: UploadedFile[]) => void
 }
+
+const mockChatHistory = [
+  {
+    id: "chat-1",
+    title: "Nike Partnership Strategy",
+    timestamp: "2025-01-15T10:30:00Z",
+    preview: "Discussed endorsement terms and performance metrics...",
+    messageCount: 12,
+  },
+  {
+    id: "chat-2",
+    title: "Q1 Brand Analysis",
+    timestamp: "2025-01-15T09:15:00Z",
+    preview: "Analyzed market positioning and competitor landscape...",
+    messageCount: 8,
+  },
+  {
+    id: "chat-3",
+    title: "Media Kit Generation",
+    timestamp: "2025-01-14T16:45:00Z",
+    preview: "Created comprehensive media kit with performance data...",
+    messageCount: 15,
+  },
+]
+
+const quickPrompts = [
+  "Draft a partnership proposal for [Brand Name]",
+  "Analyze my market positioning vs competitors",
+  "Create a media kit highlighting my achievements",
+  "Generate contract terms for endorsement deal",
+  "Write a pitch email for potential sponsors",
+  "Develop a content strategy for Q1 campaigns",
+]
 
 const mockDocuments = [
   {
@@ -59,7 +93,23 @@ const mockInsights = [
 ]
 
 export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFilesChange }: ChatResultsPanelProps) {
-  const [activeTab, setActiveTab] = useState<"documents" | "insights">("documents")
+  const [activeTab, setActiveTab] = useState<"documents" | "insights" | "history" | "prompts">("prompts")
+  const [isRecording, setIsRecording] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const handleVoiceToggle = () => {
+    setIsRecording(!isRecording)
+    // Simulate voice recording feedback
+    if (!isRecording) {
+      setTimeout(() => setIsRecording(false), 3000) // Auto-stop after 3 seconds
+    }
+  }
+
+  const filteredHistory = mockChatHistory.filter(
+    (chat) =>
+      chat.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      chat.preview.toLowerCase().includes(searchQuery.toLowerCase()),
+  )
 
   return (
     <div className="space-y-6">
@@ -72,11 +122,39 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
         </div>
       )}
 
-      {/* Document Library */}
+      <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-lg border">
+        <div className="flex items-center justify-between mb-2">
+          <h4 className="text-sm font-medium">Voice Input</h4>
+          <Button
+            variant={isRecording ? "destructive" : "outline"}
+            size="sm"
+            onClick={handleVoiceToggle}
+            className="gap-2"
+          >
+            {isRecording ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
+            {isRecording ? "Stop" : "Record"}
+          </Button>
+        </div>
+        {isRecording && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            Recording... Speak naturally about your goals
+          </div>
+        )}
+      </div>
+
+      {/* Enhanced Tab Navigation */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium">Generated Content</h4>
+          <h4 className="text-sm font-medium">AI Assistant</h4>
           <div className="flex gap-1">
+            <Button
+              variant={activeTab === "prompts" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("prompts")}
+            >
+              Prompts
+            </Button>
             <Button
               variant={activeTab === "documents" ? "default" : "ghost"}
               size="sm"
@@ -91,8 +169,29 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
             >
               Insights
             </Button>
+            <Button
+              variant={activeTab === "history" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("history")}
+            >
+              History
+            </Button>
           </div>
         </div>
+
+        {activeTab === "prompts" && (
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground mb-3">Click any prompt to start a conversation with AI</p>
+            {quickPrompts.map((prompt, index) => (
+              <Card key={index} className="p-3 hover:bg-secondary/50 cursor-pointer transition-colors">
+                <div className="flex items-center gap-3">
+                  <MessageSquare className="w-4 h-4 text-blue-500" />
+                  <p className="text-sm">{prompt}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {activeTab === "documents" && (
           <div className="space-y-2">
@@ -140,11 +239,42 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
             ))}
           </div>
         )}
+
+        {activeTab === "history" && (
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+              <Input
+                placeholder="Search chat history..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 text-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              {filteredHistory.map((chat) => (
+                <Card key={chat.id} className="p-3 hover:bg-secondary/50 cursor-pointer transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <History className="w-3 h-3 text-muted-foreground" />
+                      <h5 className="text-sm font-medium">{chat.title}</h5>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {chat.messageCount} messages
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mb-1">{chat.preview}</p>
+                  <p className="text-xs text-muted-foreground">{new Date(chat.timestamp).toLocaleDateString()}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Quick Actions */}
+      {/* Enhanced Quick Actions */}
       <div>
-        <h4 className="text-sm font-medium mb-3">Quick Actions</h4>
+        <h4 className="text-sm font-medium mb-3">Document Generation</h4>
         <div className="grid grid-cols-2 gap-2">
           <Button variant="outline" size="sm" className="gap-2 justify-start bg-transparent">
             <MessageSquare className="w-3 h-3" />

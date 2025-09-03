@@ -3,7 +3,19 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Star, Mail, Eye, TrendingUp, Calendar, Building } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import {
+  Star,
+  Mail,
+  Eye,
+  TrendingUp,
+  Calendar,
+  Building,
+  Users,
+  MessageCircle,
+  Clock,
+  CheckCircle2,
+} from "lucide-react"
 import type { Deal } from "@/types/deal"
 
 interface DealCardProps {
@@ -27,6 +39,40 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
     return "text-gray-500"
   }
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "new":
+        return "text-blue-500"
+      case "contacted":
+        return "text-yellow-500"
+      case "negotiating":
+        return "text-orange-500"
+      case "closed":
+        return "text-green-500"
+      case "rejected":
+        return "text-red-500"
+      default:
+        return "text-gray-500"
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "new":
+        return <Clock className="w-3 h-3" />
+      case "contacted":
+        return <Mail className="w-3 h-3" />
+      case "negotiating":
+        return <MessageCircle className="w-3 h-3" />
+      case "closed":
+        return <CheckCircle2 className="w-3 h-3" />
+      case "rejected":
+        return <Clock className="w-3 h-3" />
+      default:
+        return <Clock className="w-3 h-3" />
+    }
+  }
+
   return (
     <Card className="p-4 hover:shadow-md transition-shadow">
       {/* Header */}
@@ -40,6 +86,10 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
                 Linked
               </Badge>
             )}
+            <Badge variant="outline" className={`text-xs gap-1 ${getStatusColor(deal.status || "new")}`}>
+              {getStatusIcon(deal.status || "new")}
+              {(deal.status || "new").charAt(0).toUpperCase() + (deal.status || "new").slice(1)}
+            </Badge>
           </div>
           <h6 className="text-sm text-muted-foreground mb-1">{deal.title}</h6>
           <p className="text-xs text-muted-foreground">{deal.category}</p>
@@ -59,12 +109,48 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
       {/* Description */}
       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{deal.description}</p>
 
+      {deal.crmData && (
+        <div className="mb-3 p-2 bg-secondary/30 rounded-lg">
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <Users className="w-3 h-3 text-blue-500" />
+              <span className="text-muted-foreground">CRM:</span>
+              <span className="font-medium">{deal.crmData.accountManager}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-muted-foreground">Last Contact:</span>
+              <span>
+                {deal.crmData.lastContact ? new Date(deal.crmData.lastContact).toLocaleDateString() : "Never"}
+              </span>
+            </div>
+          </div>
+          {deal.crmData.nextFollowUp && (
+            <div className="flex items-center justify-between text-xs mt-1">
+              <span className="text-muted-foreground">Next Follow-up:</span>
+              <span className="font-medium text-orange-500">
+                {new Date(deal.crmData.nextFollowUp).toLocaleDateString()}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Metadata */}
       <div className="space-y-2 mb-3">
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">Value Range:</span>
           <span className={`font-medium ${getValueColor(deal.valueRange)}`}>{deal.valueRange}</span>
         </div>
+
+        {deal.pipelineData && (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Close Probability:</span>
+              <span className="font-medium">{deal.pipelineData.probability}%</span>
+            </div>
+            <Progress value={deal.pipelineData.probability} className="h-1" />
+          </div>
+        )}
 
         {deal.deadline && (
           <div className="flex items-center justify-between text-xs">
@@ -124,6 +210,25 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
             <div className="flex items-center gap-1">
               <TrendingUp className="w-3 h-3 text-green-500" />
               <span className="text-green-500 font-medium">{deal.engagement}%</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deal.emailTracking && (
+        <div className="mt-2 pt-2 border-t border-border">
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="text-center">
+              <div className="font-medium text-blue-500">{deal.emailTracking.sent}</div>
+              <div className="text-muted-foreground">Sent</div>
+            </div>
+            <div className="text-center">
+              <div className="font-medium text-green-500">{deal.emailTracking.opened}</div>
+              <div className="text-muted-foreground">Opened</div>
+            </div>
+            <div className="text-center">
+              <div className="font-medium text-purple-500">{deal.emailTracking.replied}</div>
+              <div className="text-muted-foreground">Replied</div>
             </div>
           </div>
         </div>
