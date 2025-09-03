@@ -240,7 +240,7 @@ export function CrawlerResultsPanel({
             <Activity className="w-4 h-4 text-blue-500" />
             <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">Live Market Scanning</h4>
           </div>
-          <Badge variant="outline" className="gap-1">
+          <Badge variant="outline" className="gap-1 text-black">
             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
             Active
           </Badge>
