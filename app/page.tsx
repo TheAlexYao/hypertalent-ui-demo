@@ -8,10 +8,15 @@ import { TopToolSelector } from "@/components/top-tool-selector"
 import { HyperComputerTerminal } from "@/components/hyper-computer-terminal"
 import { ResultsPanel } from "@/components/results-panel"
 import { ProtectedRoute } from "@/components/auth/protected-route"
+import type { UploadedFile } from "@/components/file-upload-zone"
+
+export type ToolType = "chat" | "crawler" | "deal-hunter" | "gameplan" | "simulation"
 
 export default function DealHunterPage() {
+  const [activeTool, setActiveTool] = useState<ToolType>("deal-hunter")
   const [rightPanelWidth, setRightPanelWidth] = useState(384) // 96 * 4 = 384px (w-96)
   const [isResizing, setIsResizing] = useState(false)
+  const [sharedFiles, setSharedFiles] = useState<UploadedFile[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -67,13 +72,13 @@ export default function DealHunterPage() {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top Tool Selector */}
-          <TopToolSelector />
+          <TopToolSelector activeTool={activeTool} onToolChange={setActiveTool} />
 
           {/* Three Column Layout with refined spacing */}
           <div className="flex-1 flex min-h-0" ref={containerRef}>
             {/* Center - Hyper Computer Terminal */}
             <div className="flex-1 min-w-[680px] border-r border-border/50">
-              <HyperComputerTerminal />
+              <HyperComputerTerminal activeTool={activeTool} files={sharedFiles} />
             </div>
 
             <div
@@ -87,7 +92,7 @@ export default function DealHunterPage() {
 
             {/* Right - Results Panel (Resizable) with dynamic width */}
             <div className="min-w-80 max-w-[720px] border-l border-border/20" style={{ width: rightPanelWidth }}>
-              <ResultsPanel />
+              <ResultsPanel activeTool={activeTool} sharedFiles={sharedFiles} onSharedFilesChange={setSharedFiles} />
             </div>
           </div>
         </div>
