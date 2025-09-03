@@ -1,0 +1,85 @@
+{
+  "scenarios": {
+    "deal_discovery": [
+      {
+        "type": "agent_step",
+        "data": {
+          "agent": "file_processor",
+          "status": "running",
+          "message": "Processing uploaded talent files...",
+          "sources": ["media-kit.pdf", "stats-2024.xlsx"],
+          "timestamp": "2025-01-15T10:30:00Z"
+        }
+      },
+      {
+        "type": "agent_step",
+        "data": {
+          "agent": "profile_analyzer",
+          "status": "running",
+          "message": "Analyzing talent profile and performance metrics",
+          "sources": ["media-kit.pdf"],
+          "timestamp": "2025-01-15T10:30:15Z"
+        }
+      },
+      {
+        "type": "agent_step",
+        "data": {
+          "agent": "deal_matcher",
+          "status": "running",
+          "message": "Searching brand partnership database for matching opportunities",
+          "sources": ["brand_database", "partnership_criteria"],
+          "timestamp": "2025-01-15T10:30:30Z"
+        }
+      },
+      {
+        "type": "deal_found",
+        "data": {
+          "deal_id": "nike_001",
+          "brand": "Nike",
+          "title": "Athletic Apparel Partnership",
+          "value_range": "$50K-100K",
+          "match_score": 9.2,
+          "category": "Sports",
+          "description": "High-value endorsement opportunity for athletic wear and footwear",
+          "requirements": ["Social media presence", "Athletic performance", "Brand alignment"]
+        }
+      },
+      {
+        "type": "deal_found",
+        "data": {
+          "deal_id": "gatorade_001",
+          "brand": "Gatorade",
+          "title": "Sports Nutrition Campaign",
+          "value_range": "$25K-50K",
+          "match_score": 8.7,
+          "category": "Nutrition",
+          "description": "Social media campaign for new product launch",
+          "requirements": ["Athletic endorsement", "Social engagement", "Video content"]
+        }
+      },
+      {
+        "type": "agent_step",
+        "data": {
+          "agent": "deal_matcher",
+          "status": "completed",
+          "message": "Found 12 high-value brand deals matching talent profile",
+          "sources": ["nike_partnership", "gatorade_campaign", "under_armour_deal"],
+          "timestamp": "2025-01-15T10:31:00Z",
+          "data": {
+            "deals_found": 12,
+            "avg_score": 8.4,
+            "total_value": "$500K-1.2M",
+            "categories": ["Sports", "Nutrition", "Lifestyle", "Technology"]
+          }
+        }
+      },
+      {
+        "type": "stream_complete",
+        "data": {
+          "message": "Deal discovery completed successfully",
+          "timestamp": "2025-01-15T10:31:05Z"
+        }
+      }
+    ]
+  }
+}
