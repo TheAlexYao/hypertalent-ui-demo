@@ -1,30 +1,18 @@
-# PRD to UI
+# Hypertalent UI Demo
 
-*Automatically synced with your [v0.app](https://v0.app) deployments*
+Frontend implementation for Hypertalent components.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/alexyao-projects/v0-fork-of-prd-to-ui)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.app-black?style=for-the-badge)](https://v0.app/chat/projects/z4HzbWGB09t)
+## Current Status
 
-## Overview
+### ✅ Completed
+- Deal Hunter UI component (mockup with sample data)
 
-This repository will stay in sync with your deployed chats on [v0.app](https://v0.app).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.app](https://v0.app).
+### 🚧 Blocked - Awaiting Dependencies
+- **API Endpoints**: Waiting on Andy to provide production endpoints for data integration
+- **Design Specifications**: Not yet connected with design team for final specs
+- **Additional Components**: [List any others you're supposed to build]
 
-## Deployment
+## Running the Demo
 
-Your project is live at:
+https://hypertalent-deal-hunter-ui.vercel.app/ - Hosted on Vercel for now.
 
-**[https://vercel.com/alexyao-projects/v0-fork-of-prd-to-ui](https://vercel.com/alexyao-projects/v0-fork-of-prd-to-ui)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.app/chat/projects/z4HzbWGB09t](https://v0.app/chat/projects/z4HzbWGB09t)**
-
-## How It Works
-
-1. Create and modify your project using [v0.app](https://v0.app)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
