@@ -234,14 +234,14 @@ export function CrawlerResultsPanel({
         </div>
       )}
 
-      <div className="p-3 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 rounded-lg border">
+      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-green-500" />
+            <Activity className="w-4 h-4 text-blue-500" />
             <h4 className="text-sm font-medium text-foreground">Live Market Scanning</h4>
           </div>
           <Badge variant="outline" className="gap-1">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
             Active
           </Badge>
         </div>
