@@ -238,7 +238,7 @@ export function CrawlerResultsPanel({
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <Activity className="w-4 h-4 text-green-500" />
-            <h4 className="text-sm font-medium">Live Market Scanning</h4>
+            <h4 className="text-sm font-medium text-foreground">Live Market Scanning</h4>
           </div>
           <Badge variant="outline" className="gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -247,11 +247,11 @@ export function CrawlerResultsPanel({
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span>Scanning: {mockScanningStatus.currentSource}</span>
-            <span>{Math.round(scanProgress)}% complete</span>
+            <span className="text-foreground/80">Scanning: {mockScanningStatus.currentSource}</span>
+            <span className="text-foreground/80">{Math.round(scanProgress)}% complete</span>
           </div>
           <Progress value={scanProgress} className="h-2" />
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center justify-between text-xs text-foreground/60">
             <span>{mockScanningStatus.pagesScanned.toLocaleString()} pages analyzed</span>
             <span>{mockScanningStatus.newOpportunities} new opportunities found</span>
           </div>
