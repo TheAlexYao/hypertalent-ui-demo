@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { FileText, Download, MessageSquare, Users, Calendar, Mic, MicOff, Search, History } from "lucide-react"
+import { FileText, Download, MessageSquare, Users, Calendar, Search, History } from "lucide-react"
 import { useState } from "react"
 import type { UploadedFile } from "../file-upload-zone"
 
@@ -94,16 +94,7 @@ const mockInsights = [
 
 export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFilesChange }: ChatResultsPanelProps) {
   const [activeTab, setActiveTab] = useState<"documents" | "insights" | "history" | "prompts">("prompts")
-  const [isRecording, setIsRecording] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-
-  const handleVoiceToggle = () => {
-    setIsRecording(!isRecording)
-    // Simulate voice recording feedback
-    if (!isRecording) {
-      setTimeout(() => setIsRecording(false), 3000) // Auto-stop after 3 seconds
-    }
-  }
 
   const filteredHistory = mockChatHistory.filter(
     (chat) =>
@@ -116,37 +107,16 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
       {/* File Context Indicator */}
       {files.length > 0 && (
         <div className="p-3 bg-secondary/50 rounded-lg border">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-foreground/70">
             Using context from {files.filter((f) => f.status === "completed").length} uploaded files
           </p>
         </div>
       )}
 
-      <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 rounded-lg border">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-sm font-medium">Voice Input</h4>
-          <Button
-            variant={isRecording ? "destructive" : "outline"}
-            size="sm"
-            onClick={handleVoiceToggle}
-            className="gap-2"
-          >
-            {isRecording ? <MicOff className="w-3 h-3" /> : <Mic className="w-3 h-3" />}
-            {isRecording ? "Stop" : "Record"}
-          </Button>
-        </div>
-        {isRecording && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            Recording... Speak naturally about your goals
-          </div>
-        )}
-      </div>
-
       {/* Enhanced Tab Navigation */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium">AI Assistant</h4>
+          <h4 className="text-sm font-medium text-foreground">AI Assistant</h4>
           <div className="flex gap-1">
             <Button
               variant={activeTab === "prompts" ? "default" : "ghost"}
@@ -181,12 +151,12 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
 
         {activeTab === "prompts" && (
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground mb-3">Click any prompt to start a conversation with AI</p>
+            <p className="text-xs text-foreground/70 mb-3">Click any prompt to start a conversation with AI</p>
             {quickPrompts.map((prompt, index) => (
               <Card key={index} className="p-3 hover:bg-secondary/50 cursor-pointer transition-colors">
                 <div className="flex items-center gap-3">
                   <MessageSquare className="w-4 h-4 text-blue-500" />
-                  <p className="text-sm">{prompt}</p>
+                  <p className="text-sm text-foreground">{prompt}</p>
                 </div>
               </Card>
             ))}
@@ -201,8 +171,8 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
                   <div className="flex items-center gap-3">
                     <FileText className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium">{doc.title}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm font-medium text-foreground">{doc.title}</p>
+                      <p className="text-xs text-foreground/60">
                         {doc.type} • {doc.size}
                       </p>
                     </div>
@@ -227,13 +197,13 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
               <Card key={insight.id} className="p-3">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h5 className="text-sm font-medium">{insight.title}</h5>
+                    <h5 className="text-sm font-medium text-foreground">{insight.title}</h5>
                     <Badge variant="outline" className="text-xs">
                       {Math.round(insight.confidence * 100)}% confidence
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">{insight.description}</p>
-                  <p className="text-xs text-muted-foreground">{insight.sources} sources analyzed</p>
+                  <p className="text-xs text-foreground/70">{insight.description}</p>
+                  <p className="text-xs text-foreground/60">{insight.sources} sources analyzed</p>
                 </div>
               </Card>
             ))}
@@ -257,14 +227,14 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <History className="w-3 h-3 text-muted-foreground" />
-                      <h5 className="text-sm font-medium">{chat.title}</h5>
+                      <h5 className="text-sm font-medium text-foreground">{chat.title}</h5>
                     </div>
                     <Badge variant="outline" className="text-xs">
                       {chat.messageCount} messages
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground mb-1">{chat.preview}</p>
-                  <p className="text-xs text-muted-foreground">{new Date(chat.timestamp).toLocaleDateString()}</p>
+                  <p className="text-xs text-foreground/70 mb-1">{chat.preview}</p>
+                  <p className="text-xs text-foreground/60">{new Date(chat.timestamp).toLocaleDateString()}</p>
                 </Card>
               ))}
             </div>
@@ -274,7 +244,7 @@ export function ChatResultsPanel({ selectedTalent, onTalentChange, files, onFile
 
       {/* Enhanced Quick Actions */}
       <div>
-        <h4 className="text-sm font-medium mb-3">Document Generation</h4>
+        <h4 className="text-sm font-medium mb-3 text-foreground">Document Generation</h4>
         <div className="grid grid-cols-2 gap-2">
           <Button variant="outline" size="sm" className="gap-2 justify-start bg-transparent">
             <MessageSquare className="w-3 h-3" />
