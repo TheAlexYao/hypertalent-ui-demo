@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Download } from "lucide-react"
+import { Download, FileText, CheckCircle } from "lucide-react"
 import { useState, useEffect } from "react"
 import { FileUploadZone, type UploadedFile } from "./file-upload-zone"
 import { TalentSelector, type TalentProfile } from "./talent-selector"
@@ -12,6 +12,13 @@ import { ExportModal } from "./export-modal"
 import { DealEvaluationInterface } from "./deal-evaluation-interface"
 import { AIDealDiscoveryEngine } from "./ai-deal-discovery-engine"
 import type { Deal } from "@/types/deal"
+import type { ToolType } from "@/app/page"
+import { Badge } from "@/components/ui/badge"
+
+import { ChatResultsPanel } from "./tools/chat-results-panel"
+import { CrawlerResultsPanel } from "./tools/crawler-results-panel"
+import { GameplanResultsPanel } from "./tools/gameplan-results-panel"
+import { SimulationResultsPanel } from "./tools/simulation-results-panel"
 
 const mockDeals: Deal[] = [
   {
@@ -97,9 +104,15 @@ const mockDeals: Deal[] = [
   },
 ]
 
-export function ResultsPanel() {
+interface ResultsPanelProps {
+  activeTool: ToolType
+  sharedFiles?: UploadedFile[]
+  onSharedFilesChange?: (files: UploadedFile[]) => void
+}
+
+export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange }: ResultsPanelProps) {
   const [selectedTalent, setSelectedTalent] = useState<TalentProfile>()
-  const [files, setFiles] = useState<UploadedFile[]>([])
+  const [files, setFiles] = useState<UploadedFile[]>(sharedFiles)
   const [deals, setDeals] = useState<Deal[]>([])
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -121,91 +134,27 @@ export function ResultsPanel() {
   })
 
   useEffect(() => {
+    setFiles(sharedFiles)
+  }, [sharedFiles])
+
+  useEffect(() => {
     const savedFiles = localStorage.getItem("hyper-talent-files")
-    if (savedFiles) {
+    if (savedFiles && sharedFiles.length === 0) {
       try {
-        setFiles(JSON.parse(savedFiles))
+        const parsedFiles = JSON.parse(savedFiles)
+        setFiles(parsedFiles)
+        if (onSharedFilesChange) {
+          onSharedFilesChange(parsedFiles)
+        }
       } catch (error) {
         console.error("Failed to load saved files:", error)
       }
     }
-  }, [])
+  }, [sharedFiles.length, onSharedFilesChange])
 
   useEffect(() => {
     localStorage.setItem("hyper-talent-files", JSON.stringify(files))
   }, [files])
-
-  useEffect(() => {
-    let filtered = [...deals]
-
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
-      filtered = filtered.filter(
-        (deal) =>
-          deal.brand.toLowerCase().includes(searchLower) ||
-          deal.title.toLowerCase().includes(searchLower) ||
-          deal.description.toLowerCase().includes(searchLower) ||
-          deal.tags.some((tag) => tag.toLowerCase().includes(searchLower)),
-      )
-    }
-
-    if (filters.category) {
-      filtered = filtered.filter((deal) => deal.category === filters.category)
-    }
-
-    if (filters.valueRange) {
-      filtered = filtered.filter((deal) => {
-        const dealValue = Number.parseInt(deal.valueRange.replace(/[^0-9]/g, ""))
-        if (filters.valueRange === "0-25000") return dealValue <= 25000
-        if (filters.valueRange === "25000-50000") return dealValue > 25000 && dealValue <= 50000
-        if (filters.valueRange === "50000-100000") return dealValue > 50000 && dealValue <= 100000
-        if (filters.valueRange === "100000+") return dealValue > 100000
-        return true
-      })
-    }
-
-    if (filters.minScore > 0) {
-      filtered = filtered.filter((deal) => deal.matchScore >= filters.minScore)
-    }
-
-    if (filters.tags.length > 0) {
-      filtered = filtered.filter((deal) => filters.tags.some((tag) => deal.tags.includes(tag)))
-    }
-
-    filtered.sort((a, b) => {
-      let aValue: any, bValue: any
-
-      switch (filters.sortBy) {
-        case "score":
-          aValue = a.matchScore
-          bValue = b.matchScore
-          break
-        case "value":
-          aValue = Number.parseInt(a.valueRange.replace(/[^0-9]/g, ""))
-          bValue = Number.parseInt(b.valueRange.replace(/[^0-9]/g, ""))
-          break
-        case "brand":
-          aValue = a.brand
-          bValue = b.brand
-          break
-        case "deadline":
-          aValue = new Date(a.deadline || "2099-12-31")
-          bValue = new Date(b.deadline || "2099-12-31")
-          break
-        default:
-          aValue = a.matchScore
-          bValue = b.matchScore
-      }
-
-      if (filters.sortOrder === "asc") {
-        return aValue > bValue ? 1 : -1
-      } else {
-        return aValue < bValue ? 1 : -1
-      }
-    })
-
-    setFilteredDeals(filtered)
-  }, [deals, filters])
 
   const handleProcessFiles = async () => {
     if (!selectedTalent) {
@@ -256,6 +205,125 @@ export function ResultsPanel() {
     setShowExportModal(true)
   }
 
+  const handleFilesChange = (newFiles: UploadedFile[]) => {
+    setFiles(newFiles)
+    if (onSharedFilesChange) {
+      onSharedFilesChange(newFiles)
+    }
+  }
+
+  const renderToolSpecificPanel = () => {
+    const completedFiles = files.filter((f) => f.status === "completed")
+
+    return (
+      <>
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
+          <div className="mb-4">
+            <TalentSelector
+              selectedTalent={selectedTalent}
+              onTalentChange={setSelectedTalent}
+              onCreateNew={() => console.log("Create new talent")}
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-medium flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Talent Context & Files
+                {completedFiles.length > 0 && (
+                  <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    {completedFiles.length} files ready
+                  </Badge>
+                )}
+              </h4>
+              {completedFiles.length > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  P0 Feature - Files Drive Everything
+                </Badge>
+              )}
+            </div>
+
+            <FileUploadZone
+              files={files}
+              onFilesChange={handleFilesChange}
+              onProcessFiles={handleProcessFiles}
+              talentId={selectedTalent?.id}
+            />
+
+            {completedFiles.length > 0 && (
+              <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
+                <p className="font-medium">✓ File Context Active</p>
+                <p>AI agents will use uploaded files to personalize all responses and recommendations.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tool-Specific Results Section */}
+        <div className="border-t border-border pt-4">{renderToolResults()}</div>
+      </>
+    )
+  }
+
+  const renderToolResults = () => {
+    const commonProps = {
+      selectedTalent,
+      onTalentChange: setSelectedTalent,
+      files,
+      onFilesChange: handleFilesChange,
+    }
+
+    switch (activeTool) {
+      case "chat":
+        return <ChatResultsPanel {...commonProps} />
+      case "crawler":
+        return <CrawlerResultsPanel {...commonProps} />
+      case "gameplan":
+        return <GameplanResultsPanel {...commonProps} />
+      case "simulation":
+        return <SimulationResultsPanel {...commonProps} />
+      case "deal-hunter":
+      default:
+        return (
+          <>
+            {showDiscoveryEngine && selectedTalent && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-sm font-medium">AI Deal Discovery</h4>
+                  {files.filter((f) => f.status === "completed").length > 0 && (
+                    <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">
+                      Using {files.filter((f) => f.status === "completed").length} files for context
+                    </Badge>
+                  )}
+                </div>
+                <AIDealDiscoveryEngine
+                  selectedTalent={selectedTalent}
+                  query="Find brand partnership deals for this talent"
+                  onDealsFound={handleDiscoveryComplete}
+                  onSessionComplete={handleSessionComplete}
+                />
+              </div>
+            )}
+
+            {deals.length > 0 && (
+              <DealEvaluationInterface
+                deals={deals}
+                selectedTalent={selectedTalent}
+                onViewDetails={handleViewDetails}
+                onGenerateOutreach={handleGenerateOutreach}
+                onExportDeals={(dealsToExport) => {
+                  setFilteredDeals(dealsToExport)
+                  setShowExportModal(true)
+                }}
+              />
+            )}
+          </>
+        )
+    }
+  }
+
   return (
     <div className="flex flex-col h-full bg-card">
       {/* Header */}
@@ -263,7 +331,7 @@ export function ResultsPanel() {
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Results & Artifacts</h3>
           <div className="flex items-center gap-2">
-            {selectedTalent && !isDiscovering && (
+            {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
               <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent">
                 Start Discovery
               </Button>
@@ -278,51 +346,7 @@ export function ResultsPanel() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
-        {/* Talent Selector */}
-        <TalentSelector
-          selectedTalent={selectedTalent}
-          onTalentChange={setSelectedTalent}
-          onCreateNew={() => console.log("Create new talent")}
-        />
-
-        {showDiscoveryEngine && selectedTalent && (
-          <div>
-            <h4 className="text-sm font-medium mb-2">AI Deal Discovery</h4>
-            <AIDealDiscoveryEngine
-              selectedTalent={selectedTalent}
-              query="Find brand partnership deals for this talent"
-              onDealsFound={handleDiscoveryComplete}
-              onSessionComplete={handleSessionComplete}
-            />
-          </div>
-        )}
-
-        {!showDiscoveryEngine && (
-          <div>
-            <h4 className="text-sm font-medium mb-2">File Management</h4>
-            <FileUploadZone
-              files={files}
-              onFilesChange={setFiles}
-              onProcessFiles={handleProcessFiles}
-              talentId={selectedTalent?.id}
-            />
-          </div>
-        )}
-
-        {deals.length > 0 && (
-          <DealEvaluationInterface
-            deals={deals}
-            selectedTalent={selectedTalent}
-            onViewDetails={handleViewDetails}
-            onGenerateOutreach={handleGenerateOutreach}
-            onExportDeals={(dealsToExport) => {
-              setFilteredDeals(dealsToExport)
-              setShowExportModal(true)
-            }}
-          />
-        )}
-      </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">{renderToolSpecificPanel()}</div>
 
       {/* Modals */}
       <DealDetailsModal

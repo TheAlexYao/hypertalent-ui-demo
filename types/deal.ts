@@ -25,4 +25,35 @@ export interface Deal {
   status?: "new" | "contacted" | "negotiating" | "closed" | "rejected"
   createdAt: string
   updatedAt: string
+  crmData?: {
+    accountManager: string
+    lastContact?: string
+    nextFollowUp?: string
+    contactHistory: Array<{
+      date: string
+      type: "email" | "call" | "meeting" | "note"
+      subject: string
+      outcome?: string
+    }>
+    dealStage: "prospecting" | "qualification" | "proposal" | "negotiation" | "closed-won" | "closed-lost"
+    assignedTo?: string
+  }
+  pipelineData?: {
+    probability: number
+    expectedCloseDate?: string
+    dealValue: number
+    stage: string
+    daysInStage: number
+    lastActivity?: string
+    nextAction?: string
+  }
+  emailTracking?: {
+    sent: number
+    opened: number
+    replied: number
+    clicked: number
+    bounced: number
+    lastEmailDate?: string
+    engagementScore: number
+  }
 }
