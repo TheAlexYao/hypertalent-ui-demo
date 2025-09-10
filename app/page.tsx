@@ -6,6 +6,7 @@ import { useState, useRef, useCallback } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { TopToolSelector } from "@/components/top-tool-selector"
 import { ResultsPanel } from "@/components/results-panel"
+import { HyperComputerTerminal } from "@/components/hyper-computer-terminal"
 import { ProtectedRoute } from "@/components/auth/protected-route"
 import type { UploadedFile } from "@/components/file-upload-zone"
 
@@ -75,10 +76,39 @@ export default function DealHunterPage() {
 
           {/* Two Column Layout with refined spacing */}
           <div className="flex-1 flex min-h-0" ref={containerRef}>
-            {/* Main - Results Panel (now full width and renamed to Deal Hunter Terminal) */}
-            <div className="flex-1 min-w-[680px]">
-              <ResultsPanel activeTool={activeTool} sharedFiles={sharedFiles} onSharedFilesChange={setSharedFiles} />
-            </div>
+            {activeTool === "deal-hunter" ? (
+              // Deal Hunter: Full width results panel only
+              <div className="flex-1 min-w-[680px]">
+                <ResultsPanel activeTool={activeTool} sharedFiles={sharedFiles} onSharedFilesChange={setSharedFiles} />
+              </div>
+            ) : (
+              // Other sections: Terminal + Results with resizable layout
+              <>
+                {/* Center - Terminal */}
+                <div className="flex-1 min-w-[680px]">
+                  <HyperComputerTerminal
+                    activeTool={activeTool}
+                    sharedFiles={sharedFiles}
+                    onSharedFilesChange={setSharedFiles}
+                  />
+                </div>
+
+                {/* Resize Handle */}
+                <div
+                  className="w-1 bg-border hover:bg-accent cursor-col-resize transition-colors"
+                  onMouseDown={handleMouseDown}
+                />
+
+                {/* Right - Results Panel */}
+                <div className="bg-card border-l" style={{ width: rightPanelWidth }}>
+                  <ResultsPanel
+                    activeTool={activeTool}
+                    sharedFiles={sharedFiles}
+                    onSharedFilesChange={setSharedFiles}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
