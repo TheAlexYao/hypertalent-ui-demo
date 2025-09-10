@@ -16,7 +16,7 @@ export function Sidebar() {
   }
 
   return (
-    <div className="w-60 bg-sidebar flex flex-col">
+    <div className="w-60 bg-sidebar flex flex-col border-0">
       {/* Logo/Brand */}
       <div className="p-4 bg-sidebar-accent/30">
         <div className="flex items-center gap-2">
@@ -32,19 +32,31 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2">
-        <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent border-0"
+        >
           <Search className="w-4 h-4" />
           Deal Discovery
         </Button>
-        <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent border-0"
+        >
           <Users className="w-4 h-4" />
           Talent Profiles
         </Button>
-        <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent border-0"
+        >
           <BarChart3 className="w-4 h-4" />
           Analytics
         </Button>
-        <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent border-0"
+        >
           <Settings className="w-4 h-4" />
           Settings
         </Button>
@@ -64,7 +76,7 @@ export function Sidebar() {
             variant="ghost"
             size="sm"
             onClick={handleSignOut}
-            className="w-full justify-start gap-2 text-sidebar-foreground hover:bg-sidebar-accent"
+            className="w-full justify-start gap-2 text-sidebar-foreground hover:bg-sidebar-accent border-0"
           >
             <LogOut className="w-3 h-3" />
             Sign Out
