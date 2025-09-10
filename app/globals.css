@@ -122,7 +122,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/20;
+    /* Removed border and outline defaults, using background colors for distinction */
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
@@ -151,7 +151,7 @@
     background: var(--muted-foreground);
   }
 
-  /* Added luxury focus states and transitions */
+  /* Updated focus states to use background colors instead of outlines */
   button,
   input,
   textarea,
@@ -163,8 +163,7 @@
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    background-color: var(--accent);
   }
 }
 
