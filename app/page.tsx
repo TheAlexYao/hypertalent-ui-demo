@@ -5,7 +5,6 @@ import React from "react"
 import { useState, useRef, useCallback } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { TopToolSelector } from "@/components/top-tool-selector"
-import { HyperComputerTerminal } from "@/components/hyper-computer-terminal"
 import { ResultsPanel } from "@/components/results-panel"
 import { ProtectedRoute } from "@/components/auth/protected-route"
 import type { UploadedFile } from "@/components/file-upload-zone"
@@ -74,24 +73,10 @@ export default function DealHunterPage() {
           {/* Top Tool Selector */}
           <TopToolSelector activeTool={activeTool} onToolChange={setActiveTool} />
 
-          {/* Three Column Layout with refined spacing */}
+          {/* Two Column Layout with refined spacing */}
           <div className="flex-1 flex min-h-0" ref={containerRef}>
-            {/* Center - Hyper Computer Terminal */}
-            <div className="flex-1 min-w-[680px] border-r border-border/50">
-              <HyperComputerTerminal activeTool={activeTool} files={sharedFiles} />
-            </div>
-
-            <div
-              className={`w-1 bg-border/30 hover:bg-border/60 cursor-col-resize transition-colors relative group ${
-                isResizing ? "bg-border/80" : ""
-              }`}
-              onMouseDown={handleMouseDown}
-            >
-              <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-border/20 transition-colors" />
-            </div>
-
-            {/* Right - Results Panel (Resizable) with dynamic width */}
-            <div className="min-w-80 max-w-[720px] border-l border-border/20" style={{ width: rightPanelWidth }}>
+            {/* Main - Results Panel (now full width and renamed to Deal Hunter Terminal) */}
+            <div className="flex-1 min-w-[680px]">
               <ResultsPanel activeTool={activeTool} sharedFiles={sharedFiles} onSharedFilesChange={setSharedFiles} />
             </div>
           </div>
