@@ -329,7 +329,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       {/* Header */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Deal Hunter Terminal</h3>
+          <h3 className="font-semibold">Results & Artifacts</h3>
           <div className="flex items-center gap-2">
             {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
               <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent">

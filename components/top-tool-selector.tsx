@@ -19,7 +19,7 @@ const tools = [
 
 export function TopToolSelector({ activeTool, onToolChange }: TopToolSelectorProps) {
   return (
-    <div className="bg-card">
+    <div className="border-b border-border bg-card">
       <div className="flex items-center gap-2 p-4">
         <span className="text-sm text-muted-foreground mr-2">Tools:</span>
         {tools.map((tool) => {
