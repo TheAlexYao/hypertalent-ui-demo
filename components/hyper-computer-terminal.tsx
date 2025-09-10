@@ -467,17 +467,17 @@ export function HyperComputerTerminal({
           {/* Welcome Message */}
           {messages.length === 0 && (
             <div className="text-center py-8">
-              <h2 className="text-2xl font-semibold mb-2">{toolConfig.title}</h2>
+              <h2 className="text-2xl font-semibold mb-2 text-gray-300">{toolConfig.title}</h2>
               <p className="text-muted-foreground mb-6">{toolConfig.subtitle}</p>
 
               <div className="mb-6 p-4 bg-secondary/30 rounded-lg border max-w-2xl mx-auto">
-                <p className="text-sm font-medium mb-3">Active AI Agents:</p>
+                <p className="text-sm font-medium mb-3 text-gray-300">Active AI Agents:</p>
                 <div className="grid grid-cols-2 gap-2">
                   {toolConfig.agents.map((agent, index) => (
                     <div key={index} className="flex items-center gap-2 p-2 bg-background/50 rounded text-left">
                       {getAgentIcon(agent.name)}
                       <div>
-                        <p className="text-xs font-medium capitalize">{agent.name.replace("_", " ")}</p>
+                        <p className="text-xs font-medium capitalize text-gray-300">{agent.name.replace("_", " ")}</p>
                         <p className="text-xs text-muted-foreground">{agent.description}</p>
                       </div>
                     </div>
@@ -533,7 +533,9 @@ export function HyperComputerTerminal({
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-medium capitalize">{message.agent.replace("_", " ")}</span>
+                      <span className="text-sm font-medium capitalize text-gray-300">
+                        {message.agent.replace("_", " ")}
+                      </span>
                       <Badge variant={message.status === "completed" ? "default" : "secondary"} className="text-xs">
                         {message.status}
                       </Badge>
@@ -567,7 +569,7 @@ export function HyperComputerTerminal({
                         onClick={() => toggleStepExpansion(message.id)}
                         className="w-full p-3 text-left flex items-center justify-between hover:bg-accent/50 transition-colors"
                       >
-                        <span className="text-sm">{message.message}</span>
+                        <span className="text-sm text-gray-300">{message.message}</span>
                         {message.expanded ? (
                           <ChevronDown className="w-4 h-4 text-muted-foreground" />
                         ) : (
