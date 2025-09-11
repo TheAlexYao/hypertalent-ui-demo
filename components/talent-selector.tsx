@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, User, Star, TrendingUp } from "lucide-react"
+import { Plus, User, Star, TrendingUp, Zap } from "lucide-react"
 import { useState } from "react"
 
 export interface TalentProfile {
@@ -24,6 +24,8 @@ interface TalentSelectorProps {
   selectedTalent?: TalentProfile
   onTalentChange: (talent: TalentProfile) => void
   onCreateNew: () => void
+  onStartDiscovery?: () => void // Added onStartDiscovery prop
+  isDiscovering?: boolean // Added isDiscovering prop
 }
 
 const mockTalents: TalentProfile[] = [
@@ -50,7 +52,13 @@ const mockTalents: TalentProfile[] = [
   },
 ]
 
-export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: TalentSelectorProps) {
+export function TalentSelector({
+  selectedTalent,
+  onTalentChange,
+  onCreateNew,
+  onStartDiscovery,
+  isDiscovering,
+}: TalentSelectorProps) {
   const [isCreating, setIsCreating] = useState(false)
 
   const formatNumber = (num: number) => {
@@ -83,8 +91,8 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
   }
 
   return (
-    <div className="space-y-4 px-6 mx-4 py-[24x] my-4">
-      <div className="flex items-center justify-between py-[16] my-[16] px-[0]">
+    <div className="space-y-4 py-[16]">
+      <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium">Selected Talent</h4>
         <Button
           variant="outline"
@@ -161,6 +169,20 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
               </div>
             </div>
           </div>
+
+          {onStartDiscovery && (
+            <div className="mt-4 pt-3 border-t">
+              <Button
+                onClick={onStartDiscovery}
+                disabled={isDiscovering}
+                className="w-full gap-2 bg-[#AE94FB] hover:bg-[#9B7EF7] text-black font-medium"
+                size="sm"
+              >
+                <Zap className="w-4 h-4" />
+                {isDiscovering ? "Discovering..." : "Start Discovery"}
+              </Button>
+            </div>
+          )}
         </Card>
       )}
     </div>

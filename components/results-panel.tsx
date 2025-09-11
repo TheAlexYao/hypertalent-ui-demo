@@ -230,6 +230,8 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
               selectedTalent={selectedTalent}
               onTalentChange={setSelectedTalent}
               onCreateNew={() => console.log("Create new talent")}
+              onStartDiscovery={handleStartDiscovery}
+              isDiscovering={isDiscovering}
             />
           </div>
 
