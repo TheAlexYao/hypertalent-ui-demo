@@ -463,7 +463,7 @@ export function HyperComputerTerminal({
     <div className="flex flex-col h-full bg-background">
       {/* Chat Messages Area */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-xl mx-auto space-y-6">
           {/* Welcome Message */}
           {messages.length === 0 && (
             <div className="text-center py-8">
@@ -619,7 +619,7 @@ export function HyperComputerTerminal({
 
       {/* Input Area - Fixed at bottom */}
       <div className="border-border p-4 bg-black border-none border-t-[0]">
-        <form onSubmit={simulateStreaming} className="max-w-4xl mx-auto">
+        <form onSubmit={simulateStreaming} className="max-w-xl mx-auto">
           <div className="flex gap-2">
             <Input
               value={input}
