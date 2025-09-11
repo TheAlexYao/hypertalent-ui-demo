@@ -357,7 +357,7 @@ const AIDiscoveryEngine = ({ selectedTalent, query, onDealsFound, onSessionCompl
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-[24] mx-[16]">
       <div className="mb-6">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <Brain className="w-5 h-5" />
