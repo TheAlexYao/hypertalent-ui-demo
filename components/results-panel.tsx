@@ -328,7 +328,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       {/* Header */}
       <div className="p-4 border-border bg-background border-none border-b-[0]">
         <div className="flex flex-col items-center text-center">
-          <h1 className="font-semibold text-xl">Deal Health Terminal</h1>
+          <h1 className="font-semibold text-xl">Deal Hunter Terminal</h1>
           <h4 className="text-sm text-muted-foreground mt-1">Find, negotiate, and close automatically</h4>
         </div>
       </div>
