@@ -301,7 +301,7 @@ export function DealEvaluationInterface({
                 </SelectContent>
               </Select>
 
-              <Button
+              <Button className="border border-primary-foreground"
                 variant="outline"
                 size="sm"
                 onClick={() => updateFilter("sortOrder", filters.sortOrder === "asc" ? "desc" : "asc")}
