@@ -392,11 +392,21 @@ export function DealEvaluationInterface({
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onViewDetails(deal)} className="flex-1 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onViewDetails(deal)}
+                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                    >
                       <Eye className="w-3 h-3" />
                       Details
                     </Button>
-                    <Button size="sm" onClick={() => onGenerateOutreach(deal)} className="flex-1 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onGenerateOutreach(deal)}
+                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                    >
                       <Mail className="w-3 h-3" />
                       Outreach
                     </Button>
