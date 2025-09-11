@@ -141,32 +141,24 @@ export function TalentSelector({
               </span>
             </div>
             <div className="flex-1">
-              <h5 className="font-medium">{selectedTalent.name}</h5>
-              <p className="text-xs text-muted-foreground mb-4">{selectedTalent.category}</p>
-
-              <div className="grid grid-cols-3 gap-4 text-xs mt-2">
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-2">
+              <div className="flex items-center justify-between">
+                <h5 className="font-medium">{selectedTalent.name}</h5>
+                <div className="flex items-center gap-4 text-xs">
+                  <div className="flex items-center gap-1">
                     <User className="w-3 h-3" />
                     <span className="font-medium">{formatNumber(selectedTalent.stats.followers)}</span>
                   </div>
-                  <p className="text-muted-foreground">Followers</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-2">
+                  <div className="flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     <span className="font-medium">{selectedTalent.stats.engagement}%</span>
                   </div>
-                  <p className="text-muted-foreground">Engagement</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-2">
+                  <div className="flex items-center gap-1">
                     <Star className="w-3 h-3" />
                     <span className="font-medium">{selectedTalent.stats.deals}</span>
                   </div>
-                  <p className="text-muted-foreground">Deals</p>
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground">{selectedTalent.category}</p>
             </div>
           </div>
 
