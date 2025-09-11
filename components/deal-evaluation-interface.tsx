@@ -351,14 +351,14 @@ export function DealEvaluationInterface({
                   {/* Metrics */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1">
-                      <DollarSign className="w-3 h-3 text-green-500" />
-                      <span style={{ color: "#AE94FB" }} className="font-semibold">
+                      <DollarSign className="w-3 h-3 text-foreground flex-col" />
+                      <span style={{ color: "#AE94FB" }} className="font-semibold text-sm">
                         {deal.valueRange}
                       </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <TrendingUp className="w-3 h-3 text-blue-500" />
-                      <span style={{ color: "#AE94FB" }} className="font-semibold">
+                      <span style={{ color: "#AE94FB" }} className="font-semibold text-sm">
                         {deal.engagement}%
                       </span>
                     </div>
