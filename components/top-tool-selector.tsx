@@ -32,7 +32,7 @@ export function TopToolSelector({ activeTool, onToolChange }: TopToolSelectorPro
               className={`gap-2 ${
                 activeTool === tool.id
                   ? "bg-[#C1C1C1] text-black hover:bg-[#C1C1C1]/90"
-                  : "text-white hover:text-white hover:bg-white/10"
+                  : "text-foreground hover:text-foreground hover:bg-accent"
               }`}
               onClick={() => onToolChange(tool.id)}
             >

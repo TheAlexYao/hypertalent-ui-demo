@@ -14,7 +14,7 @@ export type ToolType = "chat" | "crawler" | "deal-hunter" | "gameplan" | "simula
 
 export default function DealHunterPage() {
   const [activeTool, setActiveTool] = useState<ToolType>("deal-hunter")
-  const [rightPanelWidth, setRightPanelWidth] = useState(384) // 96 * 4 = 384px (w-96)
+  const [rightPanelWidth, setRightPanelWidth] = useState(720) // Maximum width for expanded layout
   const [isResizing, setIsResizing] = useState(false)
   const [sharedFiles, setSharedFiles] = useState<UploadedFile[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
