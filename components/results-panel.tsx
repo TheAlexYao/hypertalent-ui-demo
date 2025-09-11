@@ -343,7 +343,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-4 px-6">
+      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-8 px-6">
         {renderToolSpecificPanel()}
       </div>
 
