@@ -359,11 +359,13 @@ const AIDiscoveryEngine = ({ selectedTalent, query, onDealsFound, onSessionCompl
   return (
     <div className="space-y-6 mx-8">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
+        <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
           <Brain className="w-5 h-5" />
           AI Deal Discovery Engine
         </h3>
-        <p className="text-sm text-muted-foreground">Multi-agent system for intelligent brand partnership discovery</p>
+        <p className="text-sm text-muted-foreground text-center">
+          Multi-agent system for intelligent brand partnership discovery
+        </p>
       </div>
 
       {!selectedTalent && (
