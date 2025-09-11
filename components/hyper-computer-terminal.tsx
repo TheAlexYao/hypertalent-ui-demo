@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Gamepad2,
   Play,
+  Bot,
 } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import type { TalentProfile } from "./talent-profile-manager"
@@ -455,7 +456,7 @@ export function HyperComputerTerminal({
       case "roi_simulator":
         return <Play className="w-4 h-4" />
       default:
-        return <div className="w-4 h-4 bg-primary rounded-full" />
+        return <Bot className="w-4 h-4" />
     }
   }
 
