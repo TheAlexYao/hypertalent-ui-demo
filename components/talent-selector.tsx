@@ -91,7 +91,7 @@ export function TalentSelector({
   }
 
   return (
-    <div className="space-y-4 py-[16]">
+    <div className="space-y-4 py-[16] mx-4 px-6">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium">Selected Talent</h4>
         <Button
