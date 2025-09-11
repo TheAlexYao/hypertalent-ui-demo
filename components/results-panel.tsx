@@ -347,10 +347,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-8">
         {/* Left Column - Talent & Context */}
         <div className="space-y-6">
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
             <TalentSelector
               selectedTalent={selectedTalent}
               onTalentChange={setSelectedTalent}
@@ -360,7 +360,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             />
           </div>
 
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium flex items-center gap-2">
                 <FileText className="w-4 h-4" />
@@ -391,7 +391,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
 
         {/* Right Column - Tool Results */}
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-4 overflow-y-auto">
+          {renderToolResults()}
+        </div>
       </div>
     )
   }
@@ -406,7 +408,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-8 px-6">
+      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-6 px-4">
         {renderToolSpecificPanel()}
       </div>
 
