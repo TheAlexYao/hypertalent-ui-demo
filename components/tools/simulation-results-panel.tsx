@@ -376,9 +376,9 @@ export function SimulationResultsPanel({
 
                     <div className="grid grid-cols-2 gap-4">
                       {/* Path A */}
-                      <div className="space-y-2 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div className="space-y-2 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="flex items-center justify-between">
-                          <h6 className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                          <h6 className="text-sm font-medium text-blue-800 dark:text-blue-200">
                             Path A: {comparison.pathA.name}
                           </h6>
                           <Badge
@@ -408,9 +408,9 @@ export function SimulationResultsPanel({
                       </div>
 
                       {/* Path B */}
-                      <div className="space-y-2 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                      <div className="space-y-2 p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg border border-purple-200 dark:border-purple-800">
                         <div className="flex items-center justify-between">
-                          <h6 className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                          <h6 className="text-sm font-medium text-purple-800 dark:text-purple-200">
                             Path B: {comparison.pathB.name}
                           </h6>
                           <Badge
@@ -455,20 +455,26 @@ export function SimulationResultsPanel({
                 <h5 className="text-sm font-medium mb-3">Milestone Timeline Analysis</h5>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h6 className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-2">Path A Milestones</h6>
+                    <h6 className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-2">Path A Milestones</h6>
                     <div className="space-y-1">
                       {selectedComparison.pathA.keyMilestones.map((milestone, index) => (
-                        <div key={index} className="text-xs p-2 bg-blue-50 dark:bg-blue-950/20 rounded">
+                        <div
+                          key={index}
+                          className="text-xs p-2 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800"
+                        >
                           {milestone}
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h6 className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-2">Path B Milestones</h6>
+                    <h6 className="text-xs font-medium text-purple-800 dark:text-purple-200 mb-2">Path B Milestones</h6>
                     <div className="space-y-1">
                       {selectedComparison.pathB.keyMilestones.map((milestone, index) => (
-                        <div key={index} className="text-xs p-2 bg-purple-50 dark:bg-purple-950/20 rounded">
+                        <div
+                          key={index}
+                          className="text-xs p-2 bg-purple-100 dark:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-800"
+                        >
                           {milestone}
                         </div>
                       ))}
