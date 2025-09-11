@@ -261,7 +261,7 @@ export function CrawlerResultsPanel({
       {/* Enhanced Scan Configuration */}
       <div>
         <h4 className="text-sm font-medium mb-3">Intelligence Parameters</h4>
-        <Card className="p-3">
+        <Card className="p-3 mx-0 px-5 py-5">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm">Active Sources</span>
@@ -280,7 +280,7 @@ export function CrawlerResultsPanel({
                 Enabled
               </Badge>
             </div>
-            <Button variant="outline" size="sm" className="w-full bg-transparent">
+            <Button variant="outline" size="sm" className="w-full bg-transparent border border-foreground">
               Configure Intelligence
             </Button>
           </div>
