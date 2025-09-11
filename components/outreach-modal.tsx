@@ -122,7 +122,7 @@ P.S. I've attached ${talentName}'s media kit and recent performance metrics for 
           <div className="bg-secondary/50 p-3 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="font-medium">{deal.title}</span>
-              <Badge variant="default">Match: {deal.matchScore}/10</Badge>
+              <Badge className="text-background" variant="default">Match: {deal.matchScore}/10</Badge>
             </div>
             <p className="text-sm text-muted-foreground">{deal.description}</p>
           </div>
@@ -186,7 +186,7 @@ P.S. I've attached ${talentName}'s media kit and recent performance metrics for 
             <Copy className="w-4 h-4" />
             {isCopied ? "Copied!" : "Copy"}
           </Button>
-          <Button onClick={sendEmail} disabled={!outreachText} className="gap-2">
+          <Button onClick={sendEmail} disabled={!outreachText} className="gap-2 text-background">
             <Send className="w-4 h-4" />
             Send Email
           </Button>

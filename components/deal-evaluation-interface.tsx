@@ -265,7 +265,7 @@ export function DealEvaluationInterface({
             <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
               {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
             </Button>
-            <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2 pr-0 mr-2.5">
+            <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2 pr-0 mr-2.5 text-secondary">
               <Download className="w-4 h-4" />
               Export ({filteredDeals.length})
             </Button>
@@ -382,24 +382,26 @@ export function DealEvaluationInterface({
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-1 sm:gap-2 mt-auto">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => onViewDetails(deal)}
-                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                      className="flex-1 gap-1 text-xs lg:text-sm border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
                     >
                       <Eye className="w-3 h-3" />
-                      Details
+                      <span className="hidden sm:inline">Details</span>
+                      <span className="sm:hidden">View</span>
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => onGenerateOutreach(deal)}
-                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                      className="flex-1 gap-1 text-xs lg:text-sm border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
                     >
                       <Mail className="w-3 h-3" />
-                      Outreach
+                      <span className="hidden sm:inline">Outreach</span>
+                      <span className="sm:hidden">Send</span>
                     </Button>
                   </div>
                 </div>
@@ -418,23 +420,23 @@ export function DealEvaluationInterface({
           )}
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
+        <TabsContent value="analytics" className="space-y-6 mx-16">
           {/* Overview Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-primary">{analytics.totalDeals}</div>
+              <div className="font-bold text-primary text-3xl">{analytics.totalDeals}</div>
               <p className="text-sm text-muted-foreground">Total Deals</p>
             </Card>
             <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-500">{analytics.avgMatchScore.toFixed(1)}</div>
+              <div className="font-bold text-primary text-3xl">{analytics.avgMatchScore.toFixed(1)}</div>
               <p className="text-sm text-muted-foreground">Avg Match Score</p>
             </Card>
             <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-500">{analytics.totalValue}</div>
+              <div className="font-bold text-3xl text-primary">{analytics.totalValue}</div>
               <p className="text-sm text-muted-foreground">Total Value</p>
             </Card>
             <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-500">{analytics.highValueDeals}</div>
+              <div className="font-bold text-3xl text-primary">{analytics.highValueDeals}</div>
               <p className="text-sm text-muted-foreground">High Value ($50K+)</p>
             </Card>
           </div>
@@ -473,7 +475,7 @@ export function DealEvaluationInterface({
         </TabsContent>
 
         <TabsContent value="filters" className="space-y-4">
-          <Card className="p-6">
+          <Card className="p-6 mx-16">
             <h3 className="font-semibold mb-4">Advanced Filtering Options</h3>
 
             <div className="grid grid-cols-2 gap-6">

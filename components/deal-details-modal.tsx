@@ -62,19 +62,19 @@ export function DealDetailsModal({ deal, isOpen, onClose, onGenerateOutreach }: 
             <div className="grid grid-cols-2 gap-4">
               <Card className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Star className={`w-5 h-5 fill-current ${getScoreColor(deal.matchScore)}`} />
+                  <Star className={`w-5 h-5 fill-current text-foreground ${getScoreColor(deal.matchScore)}`} />
                   <span className="font-semibold">Match Score</span>
                 </div>
-                <div className={`text-2xl font-bold ${getScoreColor(deal.matchScore)}`}>{deal.matchScore}/10</div>
+                <div className={`font-bold text-primary text-3xl ${getScoreColor(deal.matchScore)}`}>{deal.matchScore}/10</div>
                 <p className="text-xs text-muted-foreground mt-1">Based on talent profile and brand alignment</p>
               </Card>
 
               <Card className="p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="w-5 h-5 text-green-500" />
+                  <DollarSign className="w-5 h-5 text-foreground" />
                   <span className="font-semibold">Value Range</span>
                 </div>
-                <div className="text-2xl font-bold text-green-500">{deal.valueRange}</div>
+                <div className="font-bold text-primary text-3xl">{deal.valueRange}</div>
                 <p className="text-xs text-muted-foreground mt-1">Estimated partnership value</p>
               </Card>
             </div>
@@ -158,15 +158,15 @@ export function DealDetailsModal({ deal, isOpen, onClose, onGenerateOutreach }: 
                 </h4>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-green-500">{deal.engagement}%</div>
+                    <div className="font-semibold text-primary text-3xl">{deal.engagement}%</div>
                     <p className="text-xs text-muted-foreground">Engagement Rate</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-blue-500">{deal.reach || "2.5M"}</div>
+                    <div className="font-semibold text-3xl text-primary">{deal.reach || "2.5M"}</div>
                     <p className="text-xs text-muted-foreground">Estimated Reach</p>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-purple-500">{deal.conversions || "3.2%"}</div>
+                    <div className="font-semibold text-3xl text-primary">{deal.conversions || "3.2%"}</div>
                     <p className="text-xs text-muted-foreground">Conversion Rate</p>
                   </div>
                 </div>
@@ -486,7 +486,7 @@ export function DealDetailsModal({ deal, isOpen, onClose, onGenerateOutreach }: 
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-          <Button onClick={() => onGenerateOutreach(deal)} className="gap-2">
+          <Button onClick={() => onGenerateOutreach(deal)} className="gap-2 text-background">
             <Mail className="w-4 h-4" />
             Generate Outreach
           </Button>
