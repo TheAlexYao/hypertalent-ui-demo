@@ -383,7 +383,7 @@ export function SimulationResultsPanel({
                           </h6>
                           <Badge
                             variant={comparison.recommendation === "pathA" ? "default" : "outline"}
-                            className="text-xs"
+                            className="text-xs text-primary-foreground bg-primary border-none"
                           >
                             {Math.round(comparison.pathA.confidence * 100)}%
                           </Badge>
