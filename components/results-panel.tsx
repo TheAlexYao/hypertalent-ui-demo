@@ -347,9 +347,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Left Column - Talent & Context */}
-        <div className="lg:col-span-1 space-y-6">
+      <div className="flex gap-6 h-full">
+        {/* Left Column - Talent & Context - Fixed width */}
+        <div className="w-80 flex-shrink-0 space-y-6">
           <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
             <TalentSelector
               selectedTalent={selectedTalent}
@@ -390,10 +390,8 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           </div>
         </div>
 
-        {/* Right Column - Tool Results */}
-        <div className="lg:col-span-3 bg-secondary/20 border border-border/50 rounded-lg p-6 w-full">
-          {renderToolResults()}
-        </div>
+        {/* Right Column - Tool Results - Takes remaining space */}
+        <div className="flex-1 bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
       </div>
     )
   }
