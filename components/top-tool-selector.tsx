@@ -29,7 +29,11 @@ export function TopToolSelector({ activeTool, onToolChange }: TopToolSelectorPro
               key={tool.id}
               variant={activeTool === tool.id ? "default" : "ghost"}
               size="sm"
-              className="gap-2"
+              className={`gap-2 ${
+                activeTool === tool.id
+                  ? "bg-[#C1C1C1] text-black hover:bg-[#C1C1C1]/90"
+                  : "text-white hover:text-white hover:bg-white/10"
+              }`}
               onClick={() => onToolChange(tool.id)}
             >
               <Icon className="w-4 h-4" />
