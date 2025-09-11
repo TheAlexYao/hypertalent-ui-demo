@@ -249,7 +249,7 @@ export function DealEvaluationInterface({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between py-8">
         <div>
           <h2 className="text-2xl font-semibold">Deal Evaluation</h2>
           <p className="text-muted-foreground">Analyze and evaluate discovered brand partnership opportunities</p>
@@ -301,7 +301,7 @@ export function DealEvaluationInterface({
                 </SelectContent>
               </Select>
 
-              <Button
+              <Button className="border border-primary-foreground"
                 variant="outline"
                 size="sm"
                 onClick={() => updateFilter("sortOrder", filters.sortOrder === "asc" ? "desc" : "asc")}
@@ -392,11 +392,21 @@ export function DealEvaluationInterface({
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onViewDetails(deal)} className="flex-1 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onViewDetails(deal)}
+                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                    >
                       <Eye className="w-3 h-3" />
                       Details
                     </Button>
-                    <Button size="sm" onClick={() => onGenerateOutreach(deal)} className="flex-1 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onGenerateOutreach(deal)}
+                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                    >
                       <Mail className="w-3 h-3" />
                       Outreach
                     </Button>

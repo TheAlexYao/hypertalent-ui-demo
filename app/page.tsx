@@ -76,22 +76,29 @@ export default function DealHunterPage() {
 
           {/* Three Column Layout with refined spacing */}
           <div className="flex-1 flex min-h-0" ref={containerRef}>
-            {/* Center - Hyper Computer Terminal */}
-            <div className="flex-1 min-w-[680px] border-r border-border/50">
-              <HyperComputerTerminal activeTool={activeTool} files={sharedFiles} />
-            </div>
+            {activeTool !== "deal-hunter" && (
+              <>
+                {/* Center - Hyper Computer Terminal */}
+                <div className="flex-1 min-w-[680px] border-r border-border/50">
+                  <HyperComputerTerminal activeTool={activeTool} files={sharedFiles} />
+                </div>
 
+                <div
+                  className={`w-1 bg-border/30 hover:bg-border/60 cursor-col-resize transition-colors relative group ${
+                    isResizing ? "bg-border/80" : ""
+                  }`}
+                  onMouseDown={handleMouseDown}
+                >
+                  <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-border/20 transition-colors" />
+                </div>
+              </>
+            )}
+
+            {/* Right - Results Panel (Resizable for other tools, full width for deal-hunter) */}
             <div
-              className={`w-1 bg-border/30 hover:bg-border/60 cursor-col-resize transition-colors relative group ${
-                isResizing ? "bg-border/80" : ""
-              }`}
-              onMouseDown={handleMouseDown}
+              className={activeTool === "deal-hunter" ? "flex-1" : "min-w-80 max-w-[720px] border-l border-border/20"}
+              style={activeTool === "deal-hunter" ? {} : { width: rightPanelWidth }}
             >
-              <div className="absolute inset-y-0 -left-1 -right-1 group-hover:bg-border/20 transition-colors" />
-            </div>
-
-            {/* Right - Results Panel (Resizable) with dynamic width */}
-            <div className="min-w-80 max-w-[720px] border-l border-border/20" style={{ width: rightPanelWidth }}>
               <ResultsPanel activeTool={activeTool} sharedFiles={sharedFiles} onSharedFilesChange={setSharedFiles} />
             </div>
           </div>
