@@ -353,21 +353,28 @@ const AIDiscoveryEngine = ({ selectedTalent, query, onDealsFound, onSessionCompl
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Brain className="w-5 h-5" />
-            AI Deal Discovery Engine
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Multi-agent system for intelligent brand partnership discovery
-          </p>
-        </div>
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 p-4 -mx-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Brain className="w-5 h-5" />
+              AI Deal Discovery Engine
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Multi-agent system for intelligent brand partnership discovery
+            </p>
+          </div>
 
-        <Button onClick={startDiscovery} disabled={!selectedTalent || isRunning} className="gap-2">
-          <Zap className="w-4 h-4" />
-          {isRunning ? "Discovering..." : "Start Discovery"}
-        </Button>
+          <Button
+            onClick={startDiscovery}
+            disabled={!selectedTalent || isRunning}
+            className="gap-2 bg-[#AE94FB] hover:bg-[#9B7FF8] text-black font-medium px-6 py-2"
+            size="lg"
+          >
+            <Zap className="w-4 h-4" />
+            {isRunning ? "Discovering..." : "Start Discovery"}
+          </Button>
+        </div>
       </div>
 
       {!selectedTalent && (
