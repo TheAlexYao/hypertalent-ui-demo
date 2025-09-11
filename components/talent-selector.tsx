@@ -83,8 +83,8 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
   }
 
   return (
-    <div className="space-y-4 py-[16]">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 px-6 mx-4 py-[24x] my-4">
+      <div className="flex items-center justify-between py-[16] my-[16] px-[0]">
         <h4 className="text-sm font-medium">Selected Talent</h4>
         <Button
           variant="outline"
