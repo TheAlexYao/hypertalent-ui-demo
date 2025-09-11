@@ -130,8 +130,8 @@ export function TalentSelector({
 
       {/* Selected Talent Card */}
       {selectedTalent && (
-        <Card className="p-4">
-          <div className="flex items-start gap-3">
+        <Card className="p-6">
+          <div className="flex items-start gap-6">
             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {selectedTalent.name
@@ -142,25 +142,25 @@ export function TalentSelector({
             </div>
             <div className="flex-1">
               <h5 className="font-medium">{selectedTalent.name}</h5>
-              <p className="text-xs text-muted-foreground mb-2">{selectedTalent.category}</p>
+              <p className="text-xs text-muted-foreground mb-4">{selectedTalent.category}</p>
 
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-3 gap-4 text-xs mt-2">
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+                  <div className="flex items-center justify-center gap-1 mb-2">
                     <User className="w-3 h-3" />
                     <span className="font-medium">{formatNumber(selectedTalent.stats.followers)}</span>
                   </div>
                   <p className="text-muted-foreground">Followers</p>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+                  <div className="flex items-center justify-center gap-1 mb-2">
                     <TrendingUp className="w-3 h-3" />
                     <span className="font-medium">{selectedTalent.stats.engagement}%</span>
                   </div>
                   <p className="text-muted-foreground">Engagement</p>
                 </div>
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+                  <div className="flex items-center justify-center gap-1 mb-2">
                     <Star className="w-3 h-3" />
                     <span className="font-medium">{selectedTalent.stats.deals}</span>
                   </div>
@@ -171,7 +171,7 @@ export function TalentSelector({
           </div>
 
           {onStartDiscovery && (
-            <div className="mt-4 pt-3 border-t">
+            <div className="mt-6 pt-4 border-t">
               <Button
                 onClick={onStartDiscovery}
                 disabled={isDiscovering}
