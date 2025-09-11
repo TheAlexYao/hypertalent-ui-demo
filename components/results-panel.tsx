@@ -341,16 +341,16 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           </div>
 
           {/* Tool-Specific Results Section */}
-          <div className="border-border pt-4 border-t-[0] space-y-4">{renderToolResults()}</div>
+          <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
         </>
       )
     }
 
     return (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Talent & Context */}
-        <div className="col-span-1 space-y-6 w-full">
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
             <TalentSelector
               selectedTalent={selectedTalent}
               onTalentChange={setSelectedTalent}
@@ -360,7 +360,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             />
           </div>
 
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium flex items-center gap-2">
                 <FileText className="w-4 h-4" />
@@ -391,7 +391,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
 
         {/* Right Column - Tool Results */}
-        <div className="col-span-2 bg-secondary/20 border border-border/50 rounded-lg p-4 w-full">
+        <div className="lg:col-span-2 bg-secondary/20 border border-border/50 rounded-lg p-6">
           {renderToolResults()}
         </div>
       </div>
