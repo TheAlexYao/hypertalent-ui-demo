@@ -341,7 +341,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           </div>
 
           {/* Tool-Specific Results Section */}
-          <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
+          <div className="border-border pt-4 border-t-[0] space-y-4">{renderToolResults()}</div>
         </>
       )
     }
@@ -391,7 +391,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
 
         {/* Right Column - Tool Results */}
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-4 w-full">{renderToolResults()}</div>
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6 w-full space-y-4">
+          {renderToolResults()}
+        </div>
       </div>
     )
   }
