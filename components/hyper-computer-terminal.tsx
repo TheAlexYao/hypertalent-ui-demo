@@ -461,7 +461,7 @@ export function HyperComputerTerminal({
   }
 
   return (
-    <div className="flex flex-col h-full bg-background max-w-[400px] mx-auto">
+    <div className="flex flex-col h-full bg-background max-w-[400px] md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto">
       {/* Chat Messages Area */}
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="space-y-6">
@@ -471,9 +471,9 @@ export function HyperComputerTerminal({
               <h2 className="text-2xl font-semibold mb-2">{toolConfig.title}</h2>
               <p className="text-muted-foreground mb-6">{toolConfig.subtitle}</p>
 
-              <div className="mb-6 p-4 bg-secondary/30 rounded-lg border max-w-2xl mx-auto">
+              <div className="mb-6 p-4 bg-secondary/30 rounded-lg border max-w-full mx-auto">
                 <p className="text-sm font-medium mb-3">Active AI Agents:</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {toolConfig.agents.map((agent, index) => (
                     <div key={index} className="flex items-center gap-2 p-2 bg-background/50 rounded text-left">
                       {getAgentIcon(agent.name)}
@@ -487,7 +487,7 @@ export function HyperComputerTerminal({
               </div>
 
               {files.filter((f) => f.status === "completed").length > 0 && (
-                <div className="mb-4 p-3 bg-green-500/10 rounded-lg border border-green-500/20 max-w-md mx-auto">
+                <div className="mb-4 p-3 bg-green-500/10 rounded-lg border border-green-500/20 max-w-full md:max-w-md mx-auto">
                   <p className="text-sm text-green-700 dark:text-green-400 font-medium">
                     ✓ Ready to analyze {files.filter((f) => f.status === "completed").length} uploaded files
                   </p>
@@ -499,7 +499,7 @@ export function HyperComputerTerminal({
 
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">Quick prompts:</p>
-                <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex flex-wrap gap-2 justify-center max-w-full">
                   {quickPrompts.map((prompt, index) => (
                     <Button
                       key={index}
@@ -520,7 +520,9 @@ export function HyperComputerTerminal({
             <div key={message.id} className="space-y-2">
               {message.agent === "user" ? (
                 <div className="flex justify-end">
-                  <div className="bg-primary text-primary-foreground p-3 rounded-lg max-w-2xl">{message.message}</div>
+                  <div className="bg-primary text-primary-foreground p-3 rounded-lg max-w-[85%] md:max-w-2xl lg:max-w-3xl">
+                    {message.message}
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-start gap-3">
