@@ -299,14 +299,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           <>
             {showDiscoveryEngine && selectedTalent && (
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-medium">AI Deal Discovery</h4>
-                  {files.filter((f) => f.status === "completed").length > 0 && (
-                    <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">
-                      Using {files.filter((f) => f.status === "completed").length} files for context
-                    </Badge>
-                  )}
-                </div>
+                
                 <AIDealDiscoveryEngine
                   selectedTalent={selectedTalent}
                   query="Find brand partnership deals for this talent"
