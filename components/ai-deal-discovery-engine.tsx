@@ -381,7 +381,7 @@ const AIDiscoveryEngine = ({ selectedTalent, query, onDealsFound, onSessionCompl
                   Started {new Date(session.startTime).toLocaleTimeString()}
                 </p>
               </div>
-              <Badge variant={session.status === "completed" ? "default" : "secondary"}>{session.status}</Badge>
+              <Badge className="text-secondary" variant={session.status === "completed" ? "default" : "secondary"}>{session.status}</Badge>
             </div>
 
             {session.status === "completed" && (
