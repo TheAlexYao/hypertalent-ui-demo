@@ -10,11 +10,8 @@ import { Progress } from "@/components/ui/progress"
 import {
   Grid,
   List,
-  Star,
-  TrendingUp,
-  Calendar,
   DollarSign,
-  Building,
+  TrendingUp,
   Target,
   BarChart3,
   Eye,
@@ -346,35 +343,22 @@ export function DealEvaluationInterface({
                       <h4 className="font-semibold text-sm">{deal.brand}</h4>
                       <p className="text-xs text-muted-foreground">{deal.title}</p>
                     </div>
-                    <Badge
-                      variant={getScoreBadgeVariant(deal.matchScore)}
-                      className="gap-1 bg-purple-500 text-white font-bold"
-                    >
-                      <Star className="w-3 h-3" />
-                      {deal.matchScore}
-                    </Badge>
                   </div>
 
                   {/* Metrics */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1">
                       <DollarSign className="w-3 h-3 text-green-500" />
-                      <span className="text-purple-500 font-semibold">{deal.valueRange}</span>
+                      <span style={{ color: "#AE94FB" }} className="font-semibold">
+                        {deal.valueRange}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <TrendingUp className="w-3 h-3 text-blue-500" />
-                      <span className="text-purple-500 font-semibold">{deal.engagement}%</span>
+                      <span style={{ color: "#AE94FB" }} className="font-semibold">
+                        {deal.engagement}%
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Building className="w-3 h-3 text-purple-500" />
-                      <span>{deal.category}</span>
-                    </div>
-                    {deal.deadline && (
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-orange-500" />
-                        <span>{new Date(deal.deadline).toLocaleDateString()}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Description */}
@@ -383,12 +367,12 @@ export function DealEvaluationInterface({
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1">
                     {deal.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
+                      <Badge key={tag} variant="outline" className="text-xs border-white">
                         {tag}
                       </Badge>
                     ))}
                     {deal.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-white">
                         +{deal.tags.length - 3}
                       </Badge>
                     )}
