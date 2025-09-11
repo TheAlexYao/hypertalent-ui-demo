@@ -156,6 +156,13 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     localStorage.setItem("hyper-talent-files", JSON.stringify(files))
   }, [files])
 
+  useEffect(() => {
+    if (selectedTalent && activeTool === "deal-hunter") {
+      setShowDiscoveryEngine(true)
+      setIsDiscovering(true)
+    }
+  }, [selectedTalent, activeTool])
+
   const handleProcessFiles = async () => {
     if (!selectedTalent) {
       alert("Please select a talent profile first")
@@ -333,11 +340,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           <h4 className="text-sm text-muted-foreground mt-1">Find, negotiate, and close automatically</h4>
         </div>
         <div className="flex items-center justify-end mt-2">
-          {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
-            <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent border-primary">
-              Start Discovery
-            </Button>
-          )}
           {filteredDeals.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleExport} className="gap-1 bg-transparent">
               <Download className="w-3 h-3" />
