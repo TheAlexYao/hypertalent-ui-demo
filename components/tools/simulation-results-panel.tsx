@@ -376,65 +376,65 @@ export function SimulationResultsPanel({
 
                     <div className="grid grid-cols-2 gap-4">
                       {/* Path A */}
-                      <div className="space-y-2 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div className="space-y-2 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
                         <div className="flex items-center justify-between">
-                          <h6 className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                          <h6 className="text-sm font-medium text-blue-800 dark:text-blue-200">
                             Path A: {comparison.pathA.name}
                           </h6>
                           <Badge
                             variant={comparison.recommendation === "pathA" ? "default" : "outline"}
-                            className="text-xs"
+                            className="text-xs text-primary-foreground bg-primary border-none"
                           >
                             {Math.round(comparison.pathA.confidence * 100)}%
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground">{comparison.pathA.strategy}</p>
+                        <p className="text-xs text-background">{comparison.pathA.strategy}</p>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
-                            <span>Revenue:</span>
-                            <span className="font-medium">{comparison.pathA.projectedRevenue}</span>
+                            <span className="text-xs text-background">Revenue:</span>
+                            <span className="font-medium text-background">{comparison.pathA.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Risk:</span>
+                            <span className="text-background">Risk:</span>
                             <span className={getRiskColor(comparison.pathA.riskLevel)}>
                               {comparison.pathA.riskLevel}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Timeline:</span>
-                            <span>{comparison.pathA.timeline}</span>
+                            <span className="text-background">Timeline:</span>
+                            <span className="text-background">{comparison.pathA.timeline}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Path B */}
-                      <div className="space-y-2 p-3 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                      <div className="space-y-2 p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg border border-purple-200 dark:border-purple-800">
                         <div className="flex items-center justify-between">
-                          <h6 className="text-sm font-medium text-purple-700 dark:text-purple-300">
+                          <h6 className="text-sm font-medium text-purple-800 dark:text-purple-200">
                             Path B: {comparison.pathB.name}
                           </h6>
                           <Badge
                             variant={comparison.recommendation === "pathB" ? "default" : "outline"}
-                            className="text-xs"
+                            className="text-xs text-white bg-primary border-none"
                           >
                             {Math.round(comparison.pathB.confidence * 100)}%
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground">{comparison.pathB.strategy}</p>
+                        <p className="text-xs text-background">{comparison.pathB.strategy}</p>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
-                            <span>Revenue:</span>
-                            <span className="font-medium">{comparison.pathB.projectedRevenue}</span>
+                            <span className="text-background">Revenue:</span>
+                            <span className="font-medium text-background">{comparison.pathB.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Risk:</span>
+                            <span className="text-background">Risk:</span>
                             <span className={getRiskColor(comparison.pathB.riskLevel)}>
                               {comparison.pathB.riskLevel}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Timeline:</span>
-                            <span>{comparison.pathB.timeline}</span>
+                            <span className="text-background">Timeline:</span>
+                            <span className="text-background">{comparison.pathB.timeline}</span>
                           </div>
                         </div>
                       </div>
@@ -455,20 +455,26 @@ export function SimulationResultsPanel({
                 <h5 className="text-sm font-medium mb-3">Milestone Timeline Analysis</h5>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h6 className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-2">Path A Milestones</h6>
+                    <h6 className="text-blue-800 dark:text-blue-200 mb-2 font-bold text-sm">Path A Milestones</h6>
                     <div className="space-y-1">
                       {selectedComparison.pathA.keyMilestones.map((milestone, index) => (
-                        <div key={index} className="text-xs p-2 bg-blue-50 dark:bg-blue-950/20 rounded">
+                        <div
+                          key={index}
+                          className="text-xs p-2 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800 text-background"
+                        >
                           {milestone}
                         </div>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <h6 className="text-xs font-medium text-purple-700 dark:text-purple-300 mb-2">Path B Milestones</h6>
+                    <h6 className="font-medium text-purple-800 dark:text-purple-200 mb-2 text-sm">Path B Milestones</h6>
                     <div className="space-y-1">
                       {selectedComparison.pathB.keyMilestones.map((milestone, index) => (
-                        <div key={index} className="text-xs p-2 bg-purple-50 dark:bg-purple-950/20 rounded">
+                        <div
+                          key={index}
+                          className="text-xs p-2 bg-purple-100 dark:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-800 text-background"
+                        >
                           {milestone}
                         </div>
                       ))}

@@ -1,7 +1,5 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
-import { Download, FileText, CheckCircle } from "lucide-react"
+import { FileText, CheckCircle } from "lucide-react"
 import { useState, useEffect } from "react"
 import { FileUploadZone, type UploadedFile } from "./file-upload-zone"
 import { TalentSelector, type TalentProfile } from "./talent-selector"
@@ -11,14 +9,13 @@ import { OutreachModal } from "./outreach-modal"
 import { ExportModal } from "./export-modal"
 import { DealEvaluationInterface } from "./deal-evaluation-interface"
 import { AIDealDiscoveryEngine } from "./ai-deal-discovery-engine"
-import type { Deal } from "@/types/deal"
-import type { ToolType } from "@/app/page"
-import { Badge } from "@/components/ui/badge"
-
 import { ChatResultsPanel } from "./tools/chat-results-panel"
 import { CrawlerResultsPanel } from "./tools/crawler-results-panel"
 import { GameplanResultsPanel } from "./tools/gameplan-results-panel"
 import { SimulationResultsPanel } from "./tools/simulation-results-panel"
+import type { Deal } from "@/types/deal"
+import type { ToolType } from "@/app/page"
+import { Badge } from "@/components/ui/badge"
 
 const mockDeals: Deal[] = [
   {
@@ -171,7 +168,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     setDeals(discoveredDeals)
     setIsDiscovering(false)
     setIsProcessing(false)
-    // Keep discovery engine visible to show results
   }
 
   const handleSessionComplete = (session: any) => {
@@ -212,59 +208,35 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
   }
 
-  const renderToolSpecificPanel = () => {
-    const completedFiles = files.filter((f) => f.status === "completed")
-
-    return (
-      <>
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
-          <div className="mb-4">
-            <TalentSelector
-              selectedTalent={selectedTalent}
-              onTalentChange={setSelectedTalent}
-              onCreateNew={() => console.log("Create new talent")}
-            />
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                Talent Context & Files
-                {completedFiles.length > 0 && (
-                  <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    {completedFiles.length} files ready
-                  </Badge>
-                )}
-              </h4>
-              {completedFiles.length > 0 && (
-                <Badge variant="secondary" className="text-xs">
-                  P0 Feature - Files Drive Everything
-                </Badge>
-              )}
-            </div>
-
-            <FileUploadZone
-              files={files}
-              onFilesChange={handleFilesChange}
-              onProcessFiles={handleProcessFiles}
-              talentId={selectedTalent?.id}
-            />
-
-            {completedFiles.length > 0 && (
-              <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
-                <p className="font-medium">✓ File Context Active</p>
-                <p>AI agents will use uploaded files to personalize all responses and recommendations.</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Tool-Specific Results Section */}
-        <div className="border-t border-border pt-4">{renderToolResults()}</div>
-      </>
-    )
+  const getTerminalTitle = () => {
+    switch (activeTool) {
+      case "chat":
+        return {
+          title: "AI Assistant Terminal",
+          subtitle: "Intelligent conversations and document generation",
+        }
+      case "crawler":
+        return {
+          title: "Market Intelligence Terminal",
+          subtitle: "Real-time brand opportunity discovery",
+        }
+      case "gameplan":
+        return {
+          title: "Strategic Planning Terminal",
+          subtitle: "Campaign strategy and execution planning",
+        }
+      case "simulation":
+        return {
+          title: "Deal Simulation Terminal",
+          subtitle: "Model and predict partnership outcomes",
+        }
+      case "deal-hunter":
+      default:
+        return {
+          title: "Deal Hunter Terminal",
+          subtitle: "Find, negotiate, and close automatically",
+        }
+    }
   }
 
   const renderToolResults = () => {
@@ -289,15 +261,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         return (
           <>
             {showDiscoveryEngine && selectedTalent && (
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-sm font-medium">AI Deal Discovery</h4>
-                  {files.filter((f) => f.status === "completed").length > 0 && (
-                    <Badge variant="outline" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">
-                      Using {files.filter((f) => f.status === "completed").length} files for context
-                    </Badge>
-                  )}
-                </div>
+              <div className="mx-10">
                 <AIDealDiscoveryEngine
                   selectedTalent={selectedTalent}
                   query="Find brand partnership deals for this talent"
@@ -324,29 +288,126 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
   }
 
-  return (
-    <div className="flex flex-col h-full bg-card">
-      {/* Header */}
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Results & Artifacts</h3>
-          <div className="flex items-center gap-2">
-            {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
-              <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent">
-                Start Discovery
-              </Button>
-            )}
-            {filteredDeals.length > 0 && (
-              <Button variant="outline" size="sm" onClick={handleExport} className="gap-1 bg-transparent">
-                <Download className="w-3 h-3" />
-                Export ({filteredDeals.length})
-              </Button>
-            )}
+  const renderToolSpecificPanel = () => {
+    const completedFiles = files.filter((f) => f.status === "completed")
+
+    if (activeTool === "deal-hunter") {
+      return (
+        <>
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-8">
+            <div className="mb-6">
+              <TalentSelector
+                selectedTalent={selectedTalent}
+                onTalentChange={setSelectedTalent}
+                onCreateNew={() => console.log("Create new talent")}
+                onStartDiscovery={handleStartDiscovery}
+                isDiscovering={isDiscovering}
+              />
+            </div>
+
+            <div className="p-6 mx-4 gap-0">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-sm font-medium flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Talent Context & Files
+                  {completedFiles.length > 0 && (
+                    <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      {completedFiles.length} files ready
+                    </Badge>
+                  )}
+                </h4>
+                {completedFiles.length > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    P0 Feature - Files Drive Everything
+                  </Badge>
+                )}
+              </div>
+
+              <FileUploadZone
+                files={files}
+                onFilesChange={handleFilesChange}
+                onProcessFiles={handleProcessFiles}
+                talentId={selectedTalent?.id}
+              />
+
+              {completedFiles.length > 0 && (
+                <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
+                  <p className="font-medium">✓ File Context Active</p>
+                  <p>AI agents will use uploaded files to personalize all responses and recommendations.</p>
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Tool-Specific Results Section */}
+          <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
+        </>
+      )
+    }
+
+    return (
+      <div className="space-y-6">
+        {/* Talent Selector Section */}
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+          <TalentSelector
+            selectedTalent={selectedTalent}
+            onTalentChange={setSelectedTalent}
+            onCreateNew={() => console.log("Create new talent")}
+            onStartDiscovery={handleStartDiscovery}
+            isDiscovering={isDiscovering}
+          />
+        </div>
+
+        {/* File Upload Section */}
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-medium flex items-center gap-2">
+              <FileText className="w-4 h-4" />
+              Context Files
+              {completedFiles.length > 0 && (
+                <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  {completedFiles.length} ready
+                </Badge>
+              )}
+            </h4>
+          </div>
+
+          <FileUploadZone
+            files={files}
+            onFilesChange={handleFilesChange}
+            onProcessFiles={handleProcessFiles}
+            talentId={selectedTalent?.id}
+          />
+
+          {completedFiles.length > 0 && (
+            <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
+              <p className="font-medium">✓ File Context Active</p>
+              <p>AI will use uploaded files for personalized responses.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Tool Results Section - Full width */}
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col h-full items-stretch">
+      {/* Header */}
+      <div className="p-4 border-border bg-background border-none border-b-[0]">
+        <div className="flex flex-col items-center text-center">
+          <h1 className="font-semibold text-xl">{getTerminalTitle().title}</h1>
+          <h4 className="text-sm text-muted-foreground mt-1">{getTerminalTitle().subtitle}</h4>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">{renderToolSpecificPanel()}</div>
+      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-8 px-6">
+        {renderToolSpecificPanel()}
+      </div>
 
       {/* Modals */}
       <DealDetailsModal

@@ -16,9 +16,9 @@ export function Sidebar() {
   }
 
   return (
-    <div className="w-60 bg-sidebar border-r border-sidebar-border flex flex-col">
+    <div className="w-60 bg-sidebar flex flex-col">
       {/* Logo/Brand */}
-      <div className="p-4 border-b border-sidebar-border">
+      <div className="p-4 border-b border-sidebar-border bg-background rounded-none border-none">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
             <Target className="w-4 h-4 text-sidebar-primary-foreground" />
@@ -31,7 +31,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 bg-background rounded-none border-none">
         <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent">
           <Search className="w-4 h-4" />
           Deal Discovery
@@ -51,7 +51,7 @@ export function Sidebar() {
       </nav>
 
       {/* User Menu */}
-      <div className="p-4 border-t border-sidebar-border">
+      <div className="p-4 border-t border-sidebar-border bg-background border-none rounded-none">
         <div className="space-y-2">
           <div className="flex items-center gap-3 p-2 rounded-lg bg-sidebar-accent/50">
             <User className="w-4 h-4" />

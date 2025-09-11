@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, User, Star, TrendingUp } from "lucide-react"
+import { Plus, User, Star, TrendingUp, Zap } from "lucide-react"
 import { useState } from "react"
 
 export interface TalentProfile {
@@ -24,6 +24,8 @@ interface TalentSelectorProps {
   selectedTalent?: TalentProfile
   onTalentChange: (talent: TalentProfile) => void
   onCreateNew: () => void
+  onStartDiscovery?: () => void // Added onStartDiscovery prop
+  isDiscovering?: boolean // Added isDiscovering prop
 }
 
 const mockTalents: TalentProfile[] = [
@@ -50,7 +52,13 @@ const mockTalents: TalentProfile[] = [
   },
 ]
 
-export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: TalentSelectorProps) {
+export function TalentSelector({
+  selectedTalent,
+  onTalentChange,
+  onCreateNew,
+  onStartDiscovery,
+  isDiscovering,
+}: TalentSelectorProps) {
   const [isCreating, setIsCreating] = useState(false)
 
   const formatNumber = (num: number) => {
@@ -83,7 +91,7 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 py-[16] mx-4 px-6">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium">Selected Talent</h4>
         <Button
@@ -91,7 +99,7 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
           size="sm"
           onClick={handleCreateNew}
           disabled={isCreating}
-          className="gap-1 bg-transparent"
+          className="gap-1 bg-transparent border-primary"
         >
           <Plus className="w-3 h-3" />
           {isCreating ? "Creating..." : "New"}
@@ -122,8 +130,8 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
 
       {/* Selected Talent Card */}
       {selectedTalent && (
-        <Card className="p-4">
-          <div className="flex items-start gap-3">
+        <Card className="p-4 my-[16]">
+          <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {selectedTalent.name
@@ -133,34 +141,40 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
               </span>
             </div>
             <div className="flex-1">
-              <h5 className="font-medium">{selectedTalent.name}</h5>
-              <p className="text-xs text-muted-foreground mb-2">{selectedTalent.category}</p>
-
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+              <div className="flex items-center justify-between">
+                <h5 className="font-medium">{selectedTalent.name}</h5>
+                <div className="flex items-center gap-4 text-xs">
+                  <div className="flex items-center gap-1">
                     <User className="w-3 h-3" />
                     <span className="font-medium">{formatNumber(selectedTalent.stats.followers)}</span>
                   </div>
-                  <p className="text-muted-foreground">Followers</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+                  <div className="flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" />
                     <span className="font-medium">{selectedTalent.stats.engagement}%</span>
                   </div>
-                  <p className="text-muted-foreground">Engagement</p>
-                </div>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
+                  <div className="flex items-center gap-1">
                     <Star className="w-3 h-3" />
                     <span className="font-medium">{selectedTalent.stats.deals}</span>
                   </div>
-                  <p className="text-muted-foreground">Deals</p>
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground">{selectedTalent.category}</p>
             </div>
           </div>
+
+          {onStartDiscovery && (
+            <div className="border-t mt-[0] pt-[9]">
+              <Button
+                onClick={onStartDiscovery}
+                disabled={isDiscovering}
+                className="w-full gap-2 bg-[#AE94FB] hover:bg-[#9B7EF7] text-black font-medium"
+                size="sm"
+              >
+                <Zap className="w-4 h-4" />
+                {isDiscovering ? "Discovering..." : "Start Discovery"}
+              </Button>
+            </div>
+          )}
         </Card>
       )}
     </div>

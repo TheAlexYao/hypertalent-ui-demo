@@ -1,8 +1,7 @@
 "use client"
 
-import type React from "react"
-
-import { Button } from "@/components/ui/button"
+import type { ReactNode } from "react"
+import { useEffect } from "react" // Moved import to the top level
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -19,7 +18,7 @@ interface AIAgent {
   progress: number
   results?: any
   processingTime?: number
-  icon: React.ReactNode
+  icon: ReactNode
 }
 
 interface DiscoverySession {
@@ -338,6 +337,12 @@ const AIDiscoveryEngine = ({ selectedTalent, query, onDealsFound, onSessionCompl
     }
   }
 
+  useEffect(() => {
+    if (selectedTalent && !session && !isRunning) {
+      startDiscovery()
+    }
+  }, [selectedTalent])
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
@@ -352,22 +357,15 @@ const AIDiscoveryEngine = ({ selectedTalent, query, onDealsFound, onSessionCompl
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Brain className="w-5 h-5" />
-            AI Deal Discovery Engine
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Multi-agent system for intelligent brand partnership discovery
-          </p>
-        </div>
-
-        <Button onClick={startDiscovery} disabled={!selectedTalent || isRunning} className="gap-2">
-          <Zap className="w-4 h-4" />
-          {isRunning ? "Discovering..." : "Start Discovery"}
-        </Button>
+    <div className="space-y-6 mx-8">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
+          <Brain className="w-5 h-5" />
+          AI Deal Discovery Engine
+        </h3>
+        <p className="text-sm text-muted-foreground text-center">
+          Multi-agent system for intelligent brand partnership discovery
+        </p>
       </div>
 
       {!selectedTalent && (

@@ -10,11 +10,8 @@ import { Progress } from "@/components/ui/progress"
 import {
   Grid,
   List,
-  Star,
-  TrendingUp,
-  Calendar,
   DollarSign,
-  Building,
+  TrendingUp,
   Target,
   BarChart3,
   Eye,
@@ -249,30 +246,33 @@ export function DealEvaluationInterface({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex items-center justify-center py-8 my-8">
+        <div className="text-center">
           <h2 className="text-2xl font-semibold">Deal Evaluation</h2>
           <p className="text-muted-foreground">Analyze and evaluate discovered brand partnership opportunities</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
-            {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
-          </Button>
-          <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2">
-            <Download className="w-4 h-4" />
-            Export ({filteredDeals.length})
-          </Button>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="deals">Deals ({filteredDeals.length})</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="filters">Advanced Filters</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between mx-14">
+          <TabsList>
+            <TabsTrigger value="deals">Deals ({filteredDeals.length})</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="filters">Advanced Filters</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="deals" className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
+              {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
+            </Button>
+            <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2 pr-0 mr-2.5">
+              <Download className="w-4 h-4" />
+              Export ({filteredDeals.length})
+            </Button>
+          </div>
+        </div>
+
+        <TabsContent value="deals" className="space-y-4 mx-16">
           {/* Quick Filters */}
           <Card className="p-4">
             <div className="flex flex-wrap items-center gap-4">
@@ -302,6 +302,7 @@ export function DealEvaluationInterface({
               </Select>
 
               <Button
+                className="border border-primary-foreground bg-transparent"
                 variant="outline"
                 size="sm"
                 onClick={() => updateFilter("sortOrder", filters.sortOrder === "asc" ? "desc" : "asc")}
@@ -345,32 +346,22 @@ export function DealEvaluationInterface({
                       <h4 className="font-semibold text-sm">{deal.brand}</h4>
                       <p className="text-xs text-muted-foreground">{deal.title}</p>
                     </div>
-                    <Badge variant={getScoreBadgeVariant(deal.matchScore)} className="gap-1">
-                      <Star className="w-3 h-3" />
-                      {deal.matchScore}
-                    </Badge>
                   </div>
 
                   {/* Metrics */}
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1">
                       <DollarSign className="w-3 h-3 text-green-500" />
-                      <span>{deal.valueRange}</span>
+                      <span style={{ color: "#AE94FB" }} className="font-semibold">
+                        {deal.valueRange}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <TrendingUp className="w-3 h-3 text-blue-500" />
-                      <span>{deal.engagement}%</span>
+                      <span style={{ color: "#AE94FB" }} className="font-semibold">
+                        {deal.engagement}%
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Building className="w-3 h-3 text-purple-500" />
-                      <span>{deal.category}</span>
-                    </div>
-                    {deal.deadline && (
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-orange-500" />
-                        <span>{new Date(deal.deadline).toLocaleDateString()}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Description */}
@@ -379,12 +370,12 @@ export function DealEvaluationInterface({
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1">
                     {deal.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs">
+                      <Badge key={tag} variant="outline" className="text-xs border-white">
                         {tag}
                       </Badge>
                     ))}
                     {deal.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs border-white">
                         +{deal.tags.length - 3}
                       </Badge>
                     )}
@@ -392,11 +383,21 @@ export function DealEvaluationInterface({
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onViewDetails(deal)} className="flex-1 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onViewDetails(deal)}
+                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                    >
                       <Eye className="w-3 h-3" />
                       Details
                     </Button>
-                    <Button size="sm" onClick={() => onGenerateOutreach(deal)} className="flex-1 gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onGenerateOutreach(deal)}
+                      className="flex-1 gap-1 border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
+                    >
                       <Mail className="w-3 h-3" />
                       Outreach
                     </Button>

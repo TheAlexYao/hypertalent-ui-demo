@@ -233,9 +233,9 @@ export function FileUploadZone({
         onDrop={handleDrop}
       >
         <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground mb-2">
+        <p className="text-sm text-foreground mb-2">
           Drag & drop files or{" "}
-          <button onClick={handleFileSelect} className="text-primary hover:underline">
+          <button onClick={handleFileSelect} className="text-primary hover:underline font-medium">
             click to upload
           </button>
         </p>

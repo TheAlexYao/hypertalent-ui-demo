@@ -19,8 +19,8 @@ const tools = [
 
 export function TopToolSelector({ activeTool, onToolChange }: TopToolSelectorProps) {
   return (
-    <div className="border-b border-border bg-card">
-      <div className="flex items-center gap-2 p-4">
+    <div className="bg-card">
+      <div className="flex items-center gap-2 p-4 bg-background py-5 border-none rounded-none">
         <span className="text-sm text-muted-foreground mr-2">Tools:</span>
         {tools.map((tool) => {
           const Icon = tool.icon
@@ -29,7 +29,11 @@ export function TopToolSelector({ activeTool, onToolChange }: TopToolSelectorPro
               key={tool.id}
               variant={activeTool === tool.id ? "default" : "ghost"}
               size="sm"
-              className="gap-2"
+              className={`gap-2 ${
+                activeTool === tool.id
+                  ? "bg-[#C1C1C1] text-black hover:bg-[#C1C1C1]/90"
+                  : "text-foreground hover:text-foreground hover:bg-accent"
+              }`}
               onClick={() => onToolChange(tool.id)}
             >
               <Icon className="w-4 h-4" />
