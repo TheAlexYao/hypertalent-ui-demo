@@ -291,66 +291,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const renderToolSpecificPanel = () => {
     const completedFiles = files.filter((f) => f.status === "completed")
 
-    if (activeTool === "deal-hunter") {
-      return (
-        <>
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-8">
-            <div className="mb-6">
-              <TalentSelector
-                selectedTalent={selectedTalent}
-                onTalentChange={setSelectedTalent}
-                onCreateNew={() => console.log("Create new talent")}
-                onStartDiscovery={handleStartDiscovery}
-                isDiscovering={isDiscovering}
-              />
-            </div>
-
-            <div className="p-6 mx-4 gap-0">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-medium flex items-center gap-2">
-                  <FileText className="w-4 h-4" />
-                  Talent Context & Files
-                  {completedFiles.length > 0 && (
-                    <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      {completedFiles.length} files ready
-                    </Badge>
-                  )}
-                </h4>
-                {completedFiles.length > 0 && (
-                  <Badge variant="secondary" className="text-xs">
-                    P0 Feature - Files Drive Everything
-                  </Badge>
-                )}
-              </div>
-
-              <FileUploadZone
-                files={files}
-                onFilesChange={handleFilesChange}
-                onProcessFiles={handleProcessFiles}
-                talentId={selectedTalent?.id}
-              />
-
-              {completedFiles.length > 0 && (
-                <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
-                  <p className="font-medium">✓ File Context Active</p>
-                  <p>AI agents will use uploaded files to personalize all responses and recommendations.</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Tool-Specific Results Section */}
-          <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
-        </>
-      )
-    }
-
     return (
-      <div className="flex gap-6 h-full">
-        {/* Left Column - Talent & Context - Fixed width */}
-        <div className="w-80 flex-shrink-0 space-y-6">
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+      <>
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-8">
+          <div className="mb-6">
             <TalentSelector
               selectedTalent={selectedTalent}
               onTalentChange={setSelectedTalent}
@@ -360,18 +304,23 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             />
           </div>
 
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+          <div className="p-6 mx-4 gap-0">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium flex items-center gap-2">
                 <FileText className="w-4 h-4" />
-                Context Files
+                Talent Context & Files
                 {completedFiles.length > 0 && (
                   <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    {completedFiles.length} ready
+                    {completedFiles.length} files ready
                   </Badge>
                 )}
               </h4>
+              {completedFiles.length > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  P0 Feature - Files Drive Everything
+                </Badge>
+              )}
             </div>
 
             <FileUploadZone
@@ -384,15 +333,15 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             {completedFiles.length > 0 && (
               <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
                 <p className="font-medium">✓ File Context Active</p>
-                <p>AI will use uploaded files for personalized responses.</p>
+                <p>AI agents will use uploaded files to personalize all responses and recommendations.</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Right Column - Tool Results - Takes remaining space */}
-        <div className="flex-1 bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
-      </div>
+        {/* Tool-Specific Results Section - Full width */}
+        <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
+      </>
     )
   }
 
