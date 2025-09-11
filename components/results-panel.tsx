@@ -299,7 +299,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           <>
             {showDiscoveryEngine && selectedTalent && (
               <div>
-                
                 <AIDealDiscoveryEngine
                   selectedTalent={selectedTalent}
                   query="Find brand partnership deals for this talent"
@@ -344,7 +343,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-foreground bg-background border-none rounded-none shadow-none mx-[16] px-[24]">
+      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-4 px-6">
         {renderToolSpecificPanel()}
       </div>
 
