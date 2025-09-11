@@ -254,7 +254,7 @@ export function DealEvaluationInterface({
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mx-14">
           <TabsList>
             <TabsTrigger value="deals">Deals ({filteredDeals.length})</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -265,14 +265,14 @@ export function DealEvaluationInterface({
             <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
               {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
             </Button>
-            <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2">
+            <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2 pr-0 mr-2.5">
               <Download className="w-4 h-4" />
               Export ({filteredDeals.length})
             </Button>
           </div>
         </div>
 
-        <TabsContent value="deals" className="space-y-4">
+        <TabsContent value="deals" className="space-y-4 mx-16">
           {/* Quick Filters */}
           <Card className="p-4">
             <div className="flex flex-wrap items-center gap-4">
