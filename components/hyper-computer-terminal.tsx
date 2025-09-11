@@ -618,7 +618,7 @@ export function HyperComputerTerminal({
       </div>
 
       {/* Input Area - Fixed at bottom */}
-      <div className="border-t border-border bg-card p-4">
+      <div className="border-border p-4 bg-black border-none border-t-[0]">
         <form onSubmit={simulateStreaming} className="max-w-4xl mx-auto">
           <div className="flex gap-2">
             <Input

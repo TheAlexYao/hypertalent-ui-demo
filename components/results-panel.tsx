@@ -293,10 +293,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
     if (activeTool === "deal-hunter") {
       return (
-        <div className="grid grid-cols-2 gap-6 h-full">
-          {/* Left Column - Talent & Context */}
-          <div className="space-y-4 w-full">
-            <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
+        <>
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-8">
+            <div className="mb-6">
               <TalentSelector
                 selectedTalent={selectedTalent}
                 onTalentChange={setSelectedTalent}
@@ -306,18 +305,23 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
               />
             </div>
 
-            <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
+            <div className="p-6 mx-4 gap-0">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium flex items-center gap-2">
                   <FileText className="w-4 h-4" />
-                  Context Files
+                  Talent Context & Files
                   {completedFiles.length > 0 && (
                     <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
                       <CheckCircle className="w-3 h-3 mr-1" />
-                      {completedFiles.length} ready
+                      {completedFiles.length} files ready
                     </Badge>
                   )}
                 </h4>
+                {completedFiles.length > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    P0 Feature - Files Drive Everything
+                  </Badge>
+                )}
               </div>
 
               <FileUploadZone
@@ -336,18 +340,16 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             </div>
           </div>
 
-          {/* Right Column - Tool Results */}
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-4 overflow-y-auto min-h-0 w-full">
-            {renderToolResults()}
-          </div>
-        </div>
+          {/* Tool-Specific Results Section */}
+          <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
+        </>
       )
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column - Talent & Context */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
             <TalentSelector
               selectedTalent={selectedTalent}
@@ -359,7 +361,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           </div>
 
           <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium flex items-center gap-2">
                 <FileText className="w-4 h-4" />
                 Context Files
@@ -380,7 +382,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             />
 
             {completedFiles.length > 0 && (
-              <div className="mt-3 p-3 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
+              <div className="mt-3 p-2 bg-green-500/5 border border-green-500/20 rounded text-xs text-green-700 dark:text-green-400">
                 <p className="font-medium">✓ File Context Active</p>
                 <p>AI will use uploaded files for personalized responses.</p>
               </div>
@@ -389,9 +391,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
 
         {/* Right Column - Tool Results */}
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6 overflow-y-auto min-h-0">
-          {renderToolResults()}
-        </div>
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
       </div>
     )
   }
@@ -399,14 +399,16 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="p-6 border-border bg-background border-none border-b-[0]">
+      <div className="p-4 border-border bg-background border-none border-b-[0]">
         <div className="flex flex-col items-center text-center">
           <h1 className="font-semibold text-xl">{getTerminalTitle().title}</h1>
           <h4 className="text-sm text-muted-foreground mt-1">{getTerminalTitle().subtitle}</h4>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 text-foreground bg-background">{renderToolSpecificPanel()}</div>
+      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-8 px-6">
+        {renderToolSpecificPanel()}
+      </div>
 
       {/* Modals */}
       <DealDetailsModal
