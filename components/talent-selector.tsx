@@ -91,7 +91,7 @@ export function TalentSelector({ selectedTalent, onTalentChange, onCreateNew }: 
           size="sm"
           onClick={handleCreateNew}
           disabled={isCreating}
-          className="gap-1 bg-transparent"
+          className="gap-1 bg-transparent border-primary"
         >
           <Plus className="w-3 h-3" />
           {isCreating ? "Creating..." : "New"}
