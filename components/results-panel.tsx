@@ -156,12 +156,12 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     localStorage.setItem("hyper-talent-files", JSON.stringify(files))
   }, [files])
 
-  useEffect(() => {
-    if (selectedTalent && activeTool === "deal-hunter") {
-      setShowDiscoveryEngine(true)
-      setIsDiscovering(true)
-    }
-  }, [selectedTalent, activeTool])
+  // useEffect(() => {
+  //   if (selectedTalent && activeTool === "deal-hunter") {
+  //     setShowDiscoveryEngine(true)
+  //     setIsDiscovering(true)
+  //   }
+  // }, [selectedTalent, activeTool])
 
   const handleProcessFiles = async () => {
     if (!selectedTalent) {
