@@ -79,7 +79,7 @@ export default function DealHunterPage() {
             {activeTool !== "deal-hunter" && (
               <>
                 {/* Center - Hyper Computer Terminal */}
-                <div className="flex-1 min-w-[680px] border-r border-border/50">
+                <div className="flex-1 min-w-[400px] border-r border-border/50">
                   <HyperComputerTerminal activeTool={activeTool} files={sharedFiles} />
                 </div>
 
