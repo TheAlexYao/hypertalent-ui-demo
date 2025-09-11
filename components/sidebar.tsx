@@ -16,7 +16,7 @@ export function Sidebar() {
   }
 
   return (
-    <div className="w-60 bg-sidebar border-r border-sidebar-border flex flex-col">
+    <div className="w-60 bg-sidebar flex flex-col">
       {/* Logo/Brand */}
       <div className="p-4 border-b border-sidebar-border bg-background rounded-none border-none">
         <div className="flex items-center gap-2">
