@@ -269,7 +269,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
 
         {/* Tool-Specific Results Section */}
-        <div className="border-t border-border pt-4">{renderToolResults()}</div>
+        <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
       </>
     )
   }
