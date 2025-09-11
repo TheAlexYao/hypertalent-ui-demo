@@ -301,7 +301,8 @@ export function DealEvaluationInterface({
                 </SelectContent>
               </Select>
 
-              <Button className="border border-primary-foreground"
+              <Button
+                className="border border-primary-foreground bg-transparent"
                 variant="outline"
                 size="sm"
                 onClick={() => updateFilter("sortOrder", filters.sortOrder === "asc" ? "desc" : "asc")}
@@ -345,7 +346,10 @@ export function DealEvaluationInterface({
                       <h4 className="font-semibold text-sm">{deal.brand}</h4>
                       <p className="text-xs text-muted-foreground">{deal.title}</p>
                     </div>
-                    <Badge variant={getScoreBadgeVariant(deal.matchScore)} className="gap-1">
+                    <Badge
+                      variant={getScoreBadgeVariant(deal.matchScore)}
+                      className="gap-1 bg-purple-600 text-white font-bold"
+                    >
                       <Star className="w-3 h-3" />
                       {deal.matchScore}
                     </Badge>
@@ -355,11 +359,11 @@ export function DealEvaluationInterface({
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1">
                       <DollarSign className="w-3 h-3 text-green-500" />
-                      <span>{deal.valueRange}</span>
+                      <span className="text-purple-600 font-semibold">{deal.valueRange}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <TrendingUp className="w-3 h-3 text-blue-500" />
-                      <span>{deal.engagement}%</span>
+                      <span className="text-purple-600 font-semibold">{deal.engagement}%</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Building className="w-3 h-3 text-purple-500" />
