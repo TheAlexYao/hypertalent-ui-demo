@@ -326,7 +326,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   }
 
   return (
-    <div className="flex flex-col h-full bg-card">
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-border bg-background border-none border-b-[0]">
         <div className="flex flex-col items-center text-center">
