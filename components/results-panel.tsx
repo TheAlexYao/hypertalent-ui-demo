@@ -347,7 +347,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
 
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Column - Talent & Context */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
@@ -391,7 +391,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
 
         {/* Right Column - Tool Results */}
-        <div className="lg:col-span-4 bg-secondary/20 border border-border/50 rounded-lg p-6">
+        <div className="lg:col-span-3 bg-secondary/20 border border-border/50 rounded-lg p-6 w-full">
           {renderToolResults()}
         </div>
       </div>
