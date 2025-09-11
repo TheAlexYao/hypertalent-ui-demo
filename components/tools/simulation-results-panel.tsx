@@ -415,7 +415,7 @@ export function SimulationResultsPanel({
                           </h6>
                           <Badge
                             variant={comparison.recommendation === "pathB" ? "default" : "outline"}
-                            className="text-xs"
+                            className="text-xs text-white bg-primary border-none"
                           >
                             {Math.round(comparison.pathB.confidence * 100)}%
                           </Badge>
@@ -427,14 +427,14 @@ export function SimulationResultsPanel({
                             <span className="font-medium text-background">{comparison.pathB.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-secondary-foreground">Risk:</span>
+                            <span className="text-background">Risk:</span>
                             <span className={getRiskColor(comparison.pathB.riskLevel)}>
                               {comparison.pathB.riskLevel}
                             </span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-background">Timeline:</span>
-                            <span>{comparison.pathB.timeline}</span>
+                            <span className="text-background">{comparison.pathB.timeline}</span>
                           </div>
                         </div>
                       </div>
