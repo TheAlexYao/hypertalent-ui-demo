@@ -327,7 +327,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   return (
     <div className="flex flex-col h-full bg-card">
       {/* Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-4 border-border bg-background border-none border-b-[0]">
         <div className="flex items-center justify-between">
           <h3 className="font-semibold">Deal Hunter Terminal  </h3>
           <div className="flex items-center gap-2">
@@ -346,7 +346,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-foreground bg-background">{renderToolSpecificPanel()}</div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-foreground bg-background border-none rounded-none shadow-none">{renderToolSpecificPanel()}</div>
 
       {/* Modals */}
       <DealDetailsModal
