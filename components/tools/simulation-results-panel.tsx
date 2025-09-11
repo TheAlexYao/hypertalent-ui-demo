@@ -388,20 +388,20 @@ export function SimulationResultsPanel({
                             {Math.round(comparison.pathA.confidence * 100)}%
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground">{comparison.pathA.strategy}</p>
+                        <p className="text-xs text-background">{comparison.pathA.strategy}</p>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
-                            <span>Revenue:</span>
+                            <span className="text-xs text-background">Revenue:</span>
                             <span className="font-medium">{comparison.pathA.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Risk:</span>
+                            <span className="text-background">Risk:</span>
                             <span className={getRiskColor(comparison.pathA.riskLevel)}>
                               {comparison.pathA.riskLevel}
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Timeline:</span>
+                            <span className="text-background">Timeline:</span>
                             <span>{comparison.pathA.timeline}</span>
                           </div>
                         </div>
@@ -420,10 +420,10 @@ export function SimulationResultsPanel({
                             {Math.round(comparison.pathB.confidence * 100)}%
                           </Badge>
                         </div>
-                        <p className="text-xs text-muted-foreground">{comparison.pathB.strategy}</p>
+                        <p className="text-xs text-background">{comparison.pathB.strategy}</p>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
-                            <span>Revenue:</span>
+                            <span className="text-background">Revenue:</span>
                             <span className="font-medium">{comparison.pathB.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
@@ -433,7 +433,7 @@ export function SimulationResultsPanel({
                             </span>
                           </div>
                           <div className="flex justify-between">
-                            <span>Timeline:</span>
+                            <span className="text-background">Timeline:</span>
                             <span>{comparison.pathB.timeline}</span>
                           </div>
                         </div>
