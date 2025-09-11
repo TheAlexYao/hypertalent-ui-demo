@@ -224,7 +224,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
     return (
       <>
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
+        <div className="bg-secondary/20 border border-border/50 rounded-lg p-4 px-[16] py-[16]">
           <div className="mb-4">
             <TalentSelector
               selectedTalent={selectedTalent}
@@ -233,7 +233,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             />
           </div>
 
-          <div>
+          <div className="px-[16] py-[16] mx-[10] gap-[0]">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium flex items-center gap-2">
                 <FileText className="w-4 h-4" />
