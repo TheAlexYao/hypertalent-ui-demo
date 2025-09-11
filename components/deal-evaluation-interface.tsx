@@ -249,7 +249,7 @@ export function DealEvaluationInterface({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between py-8">
         <div>
           <h2 className="text-2xl font-semibold">Deal Evaluation</h2>
           <p className="text-muted-foreground">Analyze and evaluate discovered brand partnership opportunities</p>
