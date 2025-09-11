@@ -334,7 +334,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
         <div className="flex items-center justify-end mt-2">
           {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
-            <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent">
+            <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent border-primary">
               Start Discovery
             </Button>
           )}
