@@ -293,9 +293,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
     if (activeTool === "deal-hunter") {
       return (
-        <>
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-8">
-            <div className="mb-6">
+        <div className="grid grid-cols-2 gap-6 h-full">
+          {/* Left Column - Talent & Context */}
+          <div className="space-y-4 w-full">
+            <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
               <TalentSelector
                 selectedTalent={selectedTalent}
                 onTalentChange={setSelectedTalent}
@@ -305,23 +306,18 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
               />
             </div>
 
-            <div className="p-6 mx-4 gap-0">
+            <div className="bg-secondary/20 border border-border/50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-medium flex items-center gap-2">
                   <FileText className="w-4 h-4" />
-                  Talent Context & Files
+                  Context Files
                   {completedFiles.length > 0 && (
                     <Badge variant="outline" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">
                       <CheckCircle className="w-3 h-3 mr-1" />
-                      {completedFiles.length} files ready
+                      {completedFiles.length} ready
                     </Badge>
                   )}
                 </h4>
-                {completedFiles.length > 0 && (
-                  <Badge variant="secondary" className="text-xs">
-                    P0 Feature - Files Drive Everything
-                  </Badge>
-                )}
               </div>
 
               <FileUploadZone
@@ -340,9 +336,11 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             </div>
           </div>
 
-          {/* Tool-Specific Results Section */}
-          <div className="border-border pt-4 border-t-[0]">{renderToolResults()}</div>
-        </>
+          {/* Right Column - Tool Results */}
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-4 overflow-y-auto min-h-0 w-full">
+            {renderToolResults()}
+          </div>
+        </div>
       )
     }
 
