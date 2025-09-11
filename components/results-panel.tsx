@@ -1,7 +1,5 @@
 "use client"
-
-import { Button } from "@/components/ui/button"
-import { Download, FileText, CheckCircle } from "lucide-react"
+import { FileText, CheckCircle } from "lucide-react"
 import { useState, useEffect } from "react"
 import { FileUploadZone, type UploadedFile } from "./file-upload-zone"
 import { TalentSelector, type TalentProfile } from "./talent-selector"
@@ -332,14 +330,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         <div className="flex flex-col items-center text-center">
           <h1 className="font-semibold text-xl">Deal Health Terminal</h1>
           <h4 className="text-sm text-muted-foreground mt-1">Find, negotiate, and close automatically</h4>
-        </div>
-        <div className="flex items-center justify-end mt-2">
-          {filteredDeals.length > 0 && (
-            <Button variant="outline" size="sm" onClick={handleExport} className="gap-1 bg-transparent">
-              <Download className="w-3 h-3" />
-              Export ({filteredDeals.length})
-            </Button>
-          )}
         </div>
       </div>
 
