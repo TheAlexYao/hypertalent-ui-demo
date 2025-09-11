@@ -455,12 +455,12 @@ export function SimulationResultsPanel({
                 <h5 className="text-sm font-medium mb-3">Milestone Timeline Analysis</h5>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h6 className="text-xs font-medium text-blue-800 dark:text-blue-200 mb-2">Path A Milestones</h6>
+                    <h6 className="text-blue-800 dark:text-blue-200 mb-2 font-bold text-sm">Path A Milestones</h6>
                     <div className="space-y-1">
                       {selectedComparison.pathA.keyMilestones.map((milestone, index) => (
                         <div
                           key={index}
-                          className="text-xs p-2 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800"
+                          className="text-xs p-2 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800 text-background"
                         >
                           {milestone}
                         </div>
@@ -468,12 +468,12 @@ export function SimulationResultsPanel({
                     </div>
                   </div>
                   <div>
-                    <h6 className="text-xs font-medium text-purple-800 dark:text-purple-200 mb-2">Path B Milestones</h6>
+                    <h6 className="font-medium text-purple-800 dark:text-purple-200 mb-2 text-sm">Path B Milestones</h6>
                     <div className="space-y-1">
                       {selectedComparison.pathB.keyMilestones.map((milestone, index) => (
                         <div
                           key={index}
-                          className="text-xs p-2 bg-purple-100 dark:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-800"
+                          className="text-xs p-2 bg-purple-100 dark:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-800 text-background"
                         >
                           {milestone}
                         </div>
