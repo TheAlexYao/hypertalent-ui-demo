@@ -391,8 +391,8 @@ export function SimulationResultsPanel({
                         <p className="text-xs text-background">{comparison.pathA.strategy}</p>
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
-                            <span className="text-background">Revenue:</span>
-                            <span className="font-medium">{comparison.pathA.projectedRevenue}</span>
+                            <span className="text-xs text-background">Revenue:</span>
+                            <span className="font-medium text-background">{comparison.pathA.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-background">Risk:</span>
@@ -402,7 +402,7 @@ export function SimulationResultsPanel({
                           </div>
                           <div className="flex justify-between">
                             <span className="text-background">Timeline:</span>
-                            <span>{comparison.pathA.timeline}</span>
+                            <span className="text-background">{comparison.pathA.timeline}</span>
                           </div>
                         </div>
                       </div>
@@ -424,10 +424,10 @@ export function SimulationResultsPanel({
                         <div className="space-y-1 text-xs">
                           <div className="flex justify-between">
                             <span className="text-background">Revenue:</span>
-                            <span className="font-medium">{comparison.pathB.projectedRevenue}</span>
+                            <span className="font-medium text-background">{comparison.pathB.projectedRevenue}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-background">Risk:</span>
+                            <span className="text-secondary-foreground">Risk:</span>
                             <span className={getRiskColor(comparison.pathB.riskLevel)}>
                               {comparison.pathB.riskLevel}
                             </span>
@@ -460,7 +460,7 @@ export function SimulationResultsPanel({
                       {selectedComparison.pathA.keyMilestones.map((milestone, index) => (
                         <div
                           key={index}
-                          className="text-xs p-2 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800 text-background"
+                          className="text-xs p-2 bg-blue-100 dark:bg-blue-900/30 rounded border border-blue-200 dark:border-blue-800"
                         >
                           {milestone}
                         </div>
@@ -473,7 +473,7 @@ export function SimulationResultsPanel({
                       {selectedComparison.pathB.keyMilestones.map((milestone, index) => (
                         <div
                           key={index}
-                          className="text-xs p-2 bg-purple-100 dark:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-800 text-background"
+                          className="text-xs p-2 bg-purple-100 dark:bg-purple-900/30 rounded border border-purple-200 dark:border-purple-800"
                         >
                           {milestone}
                         </div>
