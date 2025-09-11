@@ -261,7 +261,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         return (
           <>
             {showDiscoveryEngine && selectedTalent && (
-              <div>
+              <div className="mx-10">
                 <AIDealDiscoveryEngine
                   selectedTalent={selectedTalent}
                   query="Find brand partnership deals for this talent"
