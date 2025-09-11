@@ -130,8 +130,8 @@ export function TalentSelector({
 
       {/* Selected Talent Card */}
       {selectedTalent && (
-        <Card className="p-6">
-          <div className="flex items-start gap-6">
+        <Card className="p-4">
+          <div className="flex items-start gap-4">
             <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium">
                 {selectedTalent.name
@@ -163,7 +163,7 @@ export function TalentSelector({
           </div>
 
           {onStartDiscovery && (
-            <div className="mt-6 pt-4 border-t">
+            <div className="mt-4 pt-3 border-t">
               <Button
                 onClick={onStartDiscovery}
                 disabled={isDiscovering}
