@@ -328,25 +328,28 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     <div className="flex flex-col h-full bg-card">
       {/* Header */}
       <div className="p-4 border-border bg-background border-none border-b-[0]">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Deal Hunter Terminal  </h3>
-          <div className="flex items-center gap-2">
-            {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
-              <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent">
-                Start Discovery
-              </Button>
-            )}
-            {filteredDeals.length > 0 && (
-              <Button variant="outline" size="sm" onClick={handleExport} className="gap-1 bg-transparent">
-                <Download className="w-3 h-3" />
-                Export ({filteredDeals.length})
-              </Button>
-            )}
-          </div>
+        <div className="flex flex-col items-center text-center">
+          <h1 className="font-semibold text-xl">Deal Health Terminal</h1>
+          <h4 className="text-sm text-muted-foreground mt-1">Find, negotiate, and close automatically</h4>
+        </div>
+        <div className="flex items-center justify-end mt-2">
+          {selectedTalent && !isDiscovering && activeTool === "deal-hunter" && (
+            <Button variant="outline" size="sm" onClick={handleStartDiscovery} className="gap-1 bg-transparent">
+              Start Discovery
+            </Button>
+          )}
+          {filteredDeals.length > 0 && (
+            <Button variant="outline" size="sm" onClick={handleExport} className="gap-1 bg-transparent">
+              <Download className="w-3 h-3" />
+              Export ({filteredDeals.length})
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-foreground bg-background border-none rounded-none shadow-none">{renderToolSpecificPanel()}</div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-foreground bg-background border-none rounded-none shadow-none">
+        {renderToolSpecificPanel()}
+      </div>
 
       {/* Modals */}
       <DealDetailsModal
