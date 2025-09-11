@@ -346,7 +346,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">{renderToolSpecificPanel()}</div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 text-foreground bg-background">{renderToolSpecificPanel()}</div>
 
       {/* Modals */}
       <DealDetailsModal
