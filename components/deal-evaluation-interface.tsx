@@ -246,28 +246,31 @@ export function DealEvaluationInterface({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between py-8">
-        <div className="text-center flex-1">
+      <div className="flex items-center justify-center py-8">
+        <div className="text-center">
           <h2 className="text-2xl font-semibold">Deal Evaluation</h2>
           <p className="text-muted-foreground">Analyze and evaluate discovered brand partnership opportunities</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
-            {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
-          </Button>
-          <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2">
-            <Download className="w-4 h-4" />
-            Export ({filteredDeals.length})
-          </Button>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="deals">Deals ({filteredDeals.length})</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="filters">Advanced Filters</TabsTrigger>
-        </TabsList>
+        <div className="flex items-center justify-between">
+          <TabsList>
+            <TabsTrigger value="deals">Deals ({filteredDeals.length})</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="filters">Advanced Filters</TabsTrigger>
+          </TabsList>
+
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
+              {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid className="w-4 h-4" />}
+            </Button>
+            <Button onClick={() => onExportDeals(filteredDeals)} className="gap-2">
+              <Download className="w-4 h-4" />
+              Export ({filteredDeals.length})
+            </Button>
+          </div>
+        </div>
 
         <TabsContent value="deals" className="space-y-4">
           {/* Quick Filters */}
