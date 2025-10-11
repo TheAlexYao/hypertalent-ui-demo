@@ -1,0 +1,880 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DealHunter",
+    "description": "AI-powered talent deal discovery platform",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/auth/login": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "Login",
+        "description": "Initiate Google OAuth2 login",
+        "operationId": "login_auth_login_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/callback": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "Auth Callback",
+        "description": "Handle Google OAuth2 callback",
+        "operationId": "auth_callback_auth_callback_get",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Code"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/status": {
+      "get": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "Auth Status",
+        "description": "Check authentication status",
+        "operationId": "auth_status_auth_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deals/search": {
+      "post": {
+        "tags": [
+          "deals"
+        ],
+        "summary": "Initiate Deal Search",
+        "description": "Initiate a deal search based on Google Drive data",
+        "operationId": "initiate_deal_search_api_deals_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DealSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deals/status/{search_id}": {
+      "get": {
+        "tags": [
+          "deals"
+        ],
+        "summary": "Get Search Status",
+        "description": "Get the status of a deal search",
+        "operationId": "get_search_status_api_deals_status__search_id__get",
+        "parameters": [
+          {
+            "name": "search_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Search Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deals/search/sync": {
+      "post": {
+        "tags": [
+          "deals"
+        ],
+        "summary": "Search Deals Sync",
+        "description": "Synchronous deal search (for smaller searches)",
+        "operationId": "search_deals_sync_api_deals_search_sync_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DealSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/local/search": {
+      "post": {
+        "tags": [
+          "local"
+        ],
+        "summary": "Search Local Deals",
+        "description": "Search for deals using local text files and export to CSV",
+        "operationId": "search_local_deals_api_local_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalDealSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/local/folders": {
+      "get": {
+        "tags": [
+          "local"
+        ],
+        "summary": "List Data Folders",
+        "description": "List all available folders in the data directory",
+        "operationId": "list_data_folders_api_local_folders_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/local/test": {
+      "post": {
+        "tags": [
+          "local"
+        ],
+        "summary": "Test Local Setup",
+        "description": "Test the local file setup with sample data",
+        "operationId": "test_local_setup_api_local_test_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/web/search": {
+      "post": {
+        "tags": [
+          "web"
+        ],
+        "summary": "Search Web Deals",
+        "description": "Search for real companies via web and AI, save as CSV or Google Sheet",
+        "operationId": "search_web_deals_api_web_search_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebDealSearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/web/search-specific": {
+      "post": {
+        "tags": [
+          "web"
+        ],
+        "summary": "Search Specific Industry",
+        "description": "Search for companies in a specific industry",
+        "operationId": "search_specific_industry_api_web_search_specific_post",
+        "parameters": [
+          {
+            "name": "industry",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "technology",
+              "title": "Industry"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drive/folders": {
+      "get": {
+        "summary": "List Drive Folders",
+        "description": "List all talent folders in Google Drive",
+        "operationId": "list_drive_folders_drive_folders_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drive/folder/{folder_id}/files": {
+      "get": {
+        "summary": "List Folder Files",
+        "description": "List files in a specific Google Drive folder",
+        "operationId": "list_folder_files_drive_folder__folder_id__files_get",
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folder Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drive/file/{file_id}/content": {
+      "get": {
+        "summary": "Read File Content",
+        "description": "Read content of a specific file from Google Drive",
+        "operationId": "read_file_content_drive_file__file_id__content_get",
+        "parameters": [
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drive/analyze-talent": {
+      "post": {
+        "summary": "Analyze Talent From Drive",
+        "description": "Analyze talent data from Google Drive folder and find deals\nIf folder_id is not provided, will analyze files in the main folder",
+        "operationId": "analyze_talent_from_drive_drive_analyze_talent_post",
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Folder Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Number of deals to find",
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Number of deals to find"
+          },
+          {
+            "name": "export_csv",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Export results to CSV",
+              "default": true,
+              "title": "Export Csv"
+            },
+            "description": "Export results to CSV"
+          },
+          {
+            "name": "create_sheet",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Create Google Sheet with results",
+              "default": true,
+              "title": "Create Sheet"
+            },
+            "description": "Create Google Sheet with results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/drive/spreadsheet/{folder_id}": {
+      "post": {
+        "summary": "Create Deals Spreadsheet",
+        "description": "Analyze talent and create a Google Sheets spreadsheet with deals",
+        "operationId": "create_deals_spreadsheet_drive_spreadsheet__folder_id__post",
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folder Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Number of deals to find",
+              "default": 10,
+              "title": "Limit"
+            },
+            "description": "Number of deals to find"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DealSearchRequest": {
+        "properties": {
+          "drive_link": {
+            "type": "string",
+            "title": "Drive Link"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categories"
+          },
+          "min_company_size": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Company Size"
+          },
+          "geographic_focus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Geographic Focus"
+          },
+          "exclude_industries": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclude Industries"
+          }
+        },
+        "type": "object",
+        "required": [
+          "drive_link",
+          "prompt"
+        ],
+        "title": "DealSearchRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "features": {
+            "type": "object",
+            "title": "Features"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "features"
+        ],
+        "title": "HealthResponse"
+      },
+      "LocalDealSearchRequest": {
+        "properties": {
+          "folder_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Folder Name",
+            "default": ""
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": "Find brand partnership opportunities"
+          },
+          "talent_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Talent Name"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 20
+          }
+        },
+        "type": "object",
+        "title": "LocalDealSearchRequest"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WebDealSearchRequest": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt",
+            "default": "Find innovative brand partnership opportunities"
+          },
+          "drive_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drive Link"
+          },
+          "talent_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Talent Name",
+            "default": "Talent"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "default": 100
+          },
+          "categories": {
+            "items": {},
+            "type": "array",
+            "title": "Categories",
+            "default": [
+              "Lifestyle",
+              "Sports",
+              "Technology"
+            ]
+          }
+        },
+        "type": "object",
+        "title": "WebDealSearchRequest"
+      }
+    }
+  }
+}
