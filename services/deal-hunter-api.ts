@@ -24,9 +24,6 @@ const buildQueryString = (params: Record<string, unknown>): string => {
 
 export const getAuthStatus = () => apiGet<AuthStatusResponse>("/auth/status")
 
-export const getGoogleAuthUrl = () =>
-  apiGet<{ authorization_url: string; instructions?: string }>("/auth/login")
-
 export const initiateDealSearch = (payload: DealSearchPayload) =>
   apiPost<DealSearchResponse>("/api/deals/search", payload)
 
