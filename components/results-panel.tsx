@@ -1,6 +1,6 @@
 "use client"
-import { FileText, CheckCircle, Link as LinkIcon, AlertCircle } from "lucide-react"
-import { useState, useEffect } from "react"
+import { FileText, CheckCircle, Link as LinkIcon, AlertCircle, FileSpreadsheet, ExternalLink, Loader2 } from "lucide-react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { FileUploadZone, type UploadedFile } from "./file-upload-zone"
 import { TalentSelector, type TalentProfile } from "./talent-selector"
 import type { DealFilters as DealFiltersType } from "./deal-filters"
@@ -16,12 +16,13 @@ import type { Deal } from "@/types/deal"
 import type { ToolType } from "@/app/page"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DealHunterDiscoveryTimeline } from "./deal-hunter-discovery-timeline"
 import { DEAL_STATUS_POLL_INTERVAL_MS, DEAL_STATUS_POLL_TIMEOUT_MS } from "@/lib/config"
-import { getDealSearchStatus, initiateDealSearch } from "@/services/deal-hunter-api"
+import { getDealSearchStatus, initiateDealSearch, createDealsSpreadsheet } from "@/services/deal-hunter-api"
 import type { BackendDeal } from "@/types/backend"
 
 const mockDeals: Deal[] = [
@@ -140,6 +141,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const [searchCompletedAt, setSearchCompletedAt] = useState<string | undefined>()
   const [searchError, setSearchError] = useState<string>("")
   const [isPollingStatus, setIsPollingStatus] = useState(false)
+  const [spreadsheetUrl, setSpreadsheetUrl] = useState<string | null>(null)
+  const [spreadsheetError, setSpreadsheetError] = useState<string>("")
+  const [isGeneratingSpreadsheet, setIsGeneratingSpreadsheet] = useState(false)
+  const sheetRequestRef = useRef(false)
 
   const [filters, setFilters] = useState<DealFiltersType>({
     search: "",
@@ -188,8 +193,24 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       localStorage.setItem(DRIVE_LINK_STORAGE_KEY, driveFolderLink)
     } else {
       localStorage.removeItem(DRIVE_LINK_STORAGE_KEY)
+      setSpreadsheetUrl(null)
+      sheetRequestRef.current = false
     }
   }, [driveFolderLink])
+
+  const extractDriveFolderId = (link: string): string | null => {
+    try {
+      const url = new URL(link)
+      const folderMatch = url.pathname.match(/\/folders\/([\w-]+)/)
+      if (folderMatch && folderMatch[1]) {
+        return folderMatch[1]
+      }
+      return null
+    } catch (error) {
+      console.error("Invalid Google Drive link", error)
+      return null
+    }
+  }
 
   const mapBackendDealToDeal = (backendDeal: BackendDeal, index: number): Deal => {
     const nowIso = new Date().toISOString()
@@ -224,6 +245,52 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
   }
 
+  const generateSpreadsheet = useCallback(async () => {
+    if (!driveFolderLink) {
+      setSpreadsheetError("Connect a Google Drive folder before generating the spreadsheet.")
+      sheetRequestRef.current = false
+      return
+    }
+
+    if (isGeneratingSpreadsheet) return
+
+    const folderId = extractDriveFolderId(driveFolderLink)
+    if (!folderId) {
+      setSpreadsheetError("Unable to read folder ID from the provided link. Confirm it contains /folders/. ")
+      sheetRequestRef.current = false
+      return
+    }
+
+    setIsGeneratingSpreadsheet(true)
+    setSpreadsheetError("")
+
+    try {
+      const response = await createDealsSpreadsheet(folderId)
+      let url: string | undefined
+      if (typeof response === "string") {
+        url = response
+      } else if (response && typeof (response as any).url === "string") {
+        url = (response as any).url
+      } else if (response && typeof (response as any).spreadsheetUrl === "string") {
+        url = (response as any).spreadsheetUrl
+      }
+
+      if (url) {
+        setSpreadsheetUrl(url)
+        sheetRequestRef.current = true
+      } else {
+        setSpreadsheetError("Spreadsheet URL was not returned. Check Drive permissions and retry.")
+        sheetRequestRef.current = false
+      }
+    } catch (error) {
+      console.error("Failed to generate spreadsheet", error)
+      setSpreadsheetError("Failed to create Google Sheet. Please try again.")
+      sheetRequestRef.current = false
+    } finally {
+      setIsGeneratingSpreadsheet(false)
+    }
+  }, [driveFolderLink, isGeneratingSpreadsheet])
+
   useEffect(() => {
     if (!searchId) return
 
@@ -253,6 +320,13 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           setIsProcessing(false)
           setSearchCompletedAt(statusResponse.completed_at || new Date().toISOString())
           setSearchError("")
+          if (statusResponse.spreadsheet_url) {
+            setSpreadsheetUrl(statusResponse.spreadsheet_url)
+            sheetRequestRef.current = true
+          } else if (!sheetRequestRef.current) {
+            generateSpreadsheet()
+          }
+
           setIsPollingStatus(false)
           setSearchId(null)
           return
@@ -264,6 +338,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           setIsProcessing(false)
           setIsPollingStatus(false)
           setSearchId(null)
+          sheetRequestRef.current = false
           return
         }
 
@@ -274,6 +349,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           setIsProcessing(false)
           setIsPollingStatus(false)
           setSearchId(null)
+          sheetRequestRef.current = false
           return
         }
 
@@ -286,6 +362,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         setIsDiscovering(false)
         setIsProcessing(false)
         setIsPollingStatus(false)
+        sheetRequestRef.current = false
         setSearchId(null)
       }
     }
@@ -299,7 +376,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       }
       setIsPollingStatus(false)
     }
-  }, [searchId])
+  }, [searchId, generateSpreadsheet])
 
   const handleProcessFiles = async () => {
     if (!selectedTalent) {
@@ -339,6 +416,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       setSearchStatus("queued")
       setSearchStartedAt(new Date().toISOString())
       setSearchCompletedAt(undefined)
+      setSpreadsheetUrl(null)
+      setSpreadsheetError("")
+      sheetRequestRef.current = false
+      setSearchId(null)
 
       const promptParts: string[] = [
         `Analyze Google Drive folder contents for ${selectedTalent.name}.`,
@@ -361,6 +442,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       setSearchError("Failed to start discovery. Please try again.")
       setIsDiscovering(false)
       setSearchStatus("failed")
+      sheetRequestRef.current = false
     }
   }
 
@@ -441,7 +523,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         return (
           <>
             {showDiscoveryEngine && (
-              <div className="mx-10">
+              <div className="mx-10 space-y-4">
                 <DealHunterDiscoveryTimeline
                   status={searchStatus}
                   startedAt={searchStartedAt}
@@ -450,6 +532,49 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                   isPolling={isPollingStatus}
                   error={searchError}
                 />
+
+                <Card className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                  <div>
+                    <h4 className="font-medium flex items-center gap-2">
+                      <FileSpreadsheet className="w-4 h-4 text-green-600" />
+                      Google Sheets Output
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      Access the generated spreadsheet or create a fresh export once discovery completes.
+                    </p>
+                    {spreadsheetError && (
+                      <div className="flex items-center gap-2 text-xs text-destructive mt-2">
+                        <AlertCircle className="w-3 h-3" />
+                        <span>{spreadsheetError}</span>
+                      </div>
+                    )}
+                    {spreadsheetUrl && (
+                      <p className="text-xs text-muted-foreground mt-2 break-all">
+                        {spreadsheetUrl}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2 self-end md:self-center">
+                    {spreadsheetUrl ? (
+                      <Button asChild variant="outline" className="gap-2">
+                        <a href={spreadsheetUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                          Open Spreadsheet
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={generateSpreadsheet}
+                        disabled={isGeneratingSpreadsheet || searchStatus !== "completed"}
+                        className="gap-2"
+                      >
+                        {isGeneratingSpreadsheet ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileSpreadsheet className="w-4 h-4" />}
+                        {isGeneratingSpreadsheet ? "Generating..." : "Generate Spreadsheet"}
+                      </Button>
+                    )}
+                  </div>
+                </Card>
               </div>
             )}
 
