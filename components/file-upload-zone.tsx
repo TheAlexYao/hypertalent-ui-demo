@@ -37,6 +37,10 @@ interface FileUploadZoneProps {
   maxFileSize?: number
   acceptedTypes?: string[]
   talentId?: string
+  uploadDisabled?: boolean
+  onRequestUpload?: () => void
+  disabledHelperText?: string
+  disabledCtaLabel?: string
 }
 
 const ACCEPTED_TYPES = {
@@ -56,6 +60,10 @@ export function FileUploadZone({
   maxFileSize = MAX_FILE_SIZE,
   acceptedTypes = Object.keys(ACCEPTED_TYPES),
   talentId,
+  uploadDisabled = false,
+  onRequestUpload,
+  disabledHelperText,
+  disabledCtaLabel,
 }: FileUploadZoneProps) {
   const [isDragOver, setIsDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -131,6 +139,11 @@ export function FileUploadZone({
 
   const handleFiles = useCallback(
     async (fileList: FileList) => {
+      if (uploadDisabled) {
+        onRequestUpload?.()
+        return
+      }
+
       const newFiles: UploadedFile[] = []
 
       Array.from(fileList).forEach((file) => {
@@ -161,34 +174,56 @@ export function FileUploadZone({
     [files, onFilesChange, talentId],
   )
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(true)
-  }, [])
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      if (uploadDisabled) return
+      setIsDragOver(true)
+    },
+    [uploadDisabled],
+  )
 
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragOver(false)
-  }, [])
+  const handleDragLeave = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      if (uploadDisabled) return
+      setIsDragOver(false)
+    },
+    [uploadDisabled],
+  )
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault()
       setIsDragOver(false)
+      if (uploadDisabled) {
+        onRequestUpload?.()
+        return
+      }
+
       const droppedFiles = e.dataTransfer.files
       if (droppedFiles.length > 0) {
         handleFiles(droppedFiles)
       }
     },
-    [handleFiles],
+    [handleFiles, onRequestUpload, uploadDisabled],
   )
 
   const handleFileSelect = useCallback(() => {
+    if (uploadDisabled) {
+      onRequestUpload?.()
+      return
+    }
     fileInputRef.current?.click()
-  }, [])
+  }, [onRequestUpload, uploadDisabled])
 
   const handleFileInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (uploadDisabled) {
+        onRequestUpload?.()
+        e.target.value = ""
+        return
+      }
       const selectedFiles = e.target.files
       if (selectedFiles && selectedFiles.length > 0) {
         handleFiles(selectedFiles)
@@ -221,6 +256,11 @@ export function FileUploadZone({
   const completedFiles = files.filter((f) => f.status === "completed")
   const hasProcessableFiles = completedFiles.length > 0
 
+  const actionLabel = uploadDisabled ? disabledCtaLabel || "click to connect" : "click to upload"
+  const helperText = uploadDisabled
+    ? disabledHelperText || "Provide a shared Google Drive folder link to let Deal Hunter analyze your documents."
+    : `Supports PDF, Excel, images, and videos up to ${formatFileSize(maxFileSize)}`
+
   return (
     <div className="space-y-4">
       {/* Upload Zone */}
@@ -236,12 +276,10 @@ export function FileUploadZone({
         <p className="text-sm text-foreground mb-2">
           Drag & drop files or{" "}
           <button onClick={handleFileSelect} className="text-primary hover:underline font-medium">
-            click to upload
+            {actionLabel}
           </button>
         </p>
-        <p className="text-xs text-muted-foreground">
-          Supports PDF, Excel, images, and videos up to {formatFileSize(maxFileSize)}
-        </p>
+        <p className="text-xs text-muted-foreground">{helperText}</p>
         <input
           ref={fileInputRef}
           type="file"
@@ -300,10 +338,16 @@ export function FileUploadZone({
       )}
 
       {/* Process Files Button */}
-      {hasProcessableFiles && (
+      {uploadDisabled ? (
+        <Button onClick={() => onRequestUpload?.()} className="w-full" size="sm" variant="outline">
+          {disabledCtaLabel || "Connect Google Drive Folder"}
+        </Button>
+      ) : (
+        hasProcessableFiles && (
         <Button onClick={onProcessFiles} className="w-full" size="sm">
           Process Files ({completedFiles.length})
         </Button>
+        )
       )}
     </div>
   )
