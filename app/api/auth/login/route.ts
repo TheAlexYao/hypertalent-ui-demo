@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 
 import { API_BASE_URL } from "@/lib/config"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
