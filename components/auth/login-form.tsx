@@ -3,28 +3,16 @@
 import type React from "react"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Target, Loader2, Mail, Lock, AlertCircle } from "lucide-react"
-import { useState } from "react"
+import { Target, Loader2, AlertCircle, LogIn } from "lucide-react"
 import { useAuth } from "./auth-provider"
 
 export function LoginForm() {
-  const [email, setEmail] = useState("sarah@hypertalent.com")
-  const [password, setPassword] = useState("demo123")
-  const [error, setError] = useState("")
   const { signIn, isLoading } = useAuth()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-
-    try {
-      await signIn(email, password)
-    } catch (err) {
-      setError("Invalid email or password. Please try again.")
-    }
+  const handleGoogleSignIn = async () => {
+    await signIn()
   }
 
   return (
@@ -45,59 +33,18 @@ export function LoginForm() {
         <div className="text-center mb-6">
           <Badge variant="secondary" className="gap-1">
             <AlertCircle className="w-3 h-3" />
-            Demo Mode - Auto-login enabled
+            Google OAuth Required
           </Badge>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="pl-9"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="pl-9"
-                required
-              />
-            </div>
-          </div>
-
-          {error && <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-lg">{error}</div>}
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground text-center">
+            Continue to Google to authenticate and return to Deal Hunter automatically.
+          </p>
+          <Button onClick={handleGoogleSignIn} className="w-full gap-2" disabled={isLoading}>
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
+            {isLoading ? "Redirecting..." : "Sign in with Google"}
           </Button>
-        </form>
-
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>Demo Credentials:</p>
-          <p>Email: sarah@hypertalent.com</p>
-          <p>Password: demo123</p>
         </div>
       </Card>
     </div>
