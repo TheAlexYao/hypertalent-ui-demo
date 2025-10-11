@@ -8,7 +8,6 @@ import { DealDetailsModal } from "./deal-details-modal"
 import { OutreachModal } from "./outreach-modal"
 import { ExportModal } from "./export-modal"
 import { DealEvaluationInterface } from "./deal-evaluation-interface"
-import { AIDealDiscoveryEngine } from "./ai-deal-discovery-engine"
 import { ChatResultsPanel } from "./tools/chat-results-panel"
 import { CrawlerResultsPanel } from "./tools/crawler-results-panel"
 import { GameplanResultsPanel } from "./tools/gameplan-results-panel"
@@ -20,6 +19,10 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { DealHunterDiscoveryTimeline } from "./deal-hunter-discovery-timeline"
+import { DEAL_STATUS_POLL_INTERVAL_MS, DEAL_STATUS_POLL_TIMEOUT_MS } from "@/lib/config"
+import { getDealSearchStatus, initiateDealSearch } from "@/services/deal-hunter-api"
+import type { BackendDeal } from "@/types/backend"
 
 const mockDeals: Deal[] = [
   {
@@ -107,6 +110,8 @@ const mockDeals: Deal[] = [
 
 const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
 
+type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
+
 interface ResultsPanelProps {
   activeTool: ToolType
   sharedFiles?: UploadedFile[]
@@ -129,6 +134,12 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const [driveFolderLink, setDriveFolderLink] = useState<string>("")
   const [driveLinkInput, setDriveLinkInput] = useState("")
   const [driveLinkError, setDriveLinkError] = useState("")
+  const [searchId, setSearchId] = useState<string | null>(null)
+  const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle")
+  const [searchStartedAt, setSearchStartedAt] = useState<string | undefined>()
+  const [searchCompletedAt, setSearchCompletedAt] = useState<string | undefined>()
+  const [searchError, setSearchError] = useState<string>("")
+  const [isPollingStatus, setIsPollingStatus] = useState(false)
 
   const [filters, setFilters] = useState<DealFiltersType>({
     search: "",
@@ -180,6 +191,116 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
   }, [driveFolderLink])
 
+  const mapBackendDealToDeal = (backendDeal: BackendDeal, index: number): Deal => {
+    const nowIso = new Date().toISOString()
+    const fallbackTitle = backendDeal.brand ? `${backendDeal.brand} Opportunity` : "Deal Opportunity"
+
+    return {
+      id: backendDeal.id || `deal-${index}-${Date.now()}`,
+      brand: backendDeal.brand || backendDeal.contact?.name || "Unknown Brand",
+      title: backendDeal.title || fallbackTitle,
+      category: backendDeal.category || "General",
+      valueRange: backendDeal.value_range || "$0",
+      matchScore: backendDeal.match_score ?? 0,
+      description: backendDeal.description || "AI-identified partnership opportunity.",
+      tags: backendDeal.tags || [],
+      deadline: undefined,
+      requirements: backendDeal.requirements || [],
+      engagement: undefined,
+      reach: undefined,
+      conversions: undefined,
+      industry: backendDeal.category || "General",
+      companySize: undefined,
+      duration: undefined,
+      startDate: undefined,
+      contact: {
+        name: backendDeal.contact?.name,
+        email: backendDeal.contact?.email,
+        department: backendDeal.contact?.department,
+      },
+      status: (backendDeal.status as Deal["status"]) || "new",
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    }
+  }
+
+  useEffect(() => {
+    if (!searchId) return
+
+    let cancelled = false
+    let timeoutId: number | null = null
+    const pollStartedAt = Date.now()
+
+    const pollStatus = async () => {
+      if (cancelled) return
+      setIsPollingStatus(true)
+
+      try {
+        const statusResponse = await getDealSearchStatus(searchId)
+        if (cancelled) return
+
+        const normalizedStatus = (statusResponse.status as SearchStatus) || "in_progress"
+        setSearchStatus(normalizedStatus)
+        if (statusResponse.started_at) {
+          setSearchStartedAt(statusResponse.started_at)
+        }
+
+        if (normalizedStatus === "completed") {
+          const mappedDeals = (statusResponse.deals || []).map((deal, index) => mapBackendDealToDeal(deal, index))
+          setDeals(mappedDeals)
+          setFilteredDeals(mappedDeals)
+          setIsDiscovering(false)
+          setIsProcessing(false)
+          setSearchCompletedAt(statusResponse.completed_at || new Date().toISOString())
+          setSearchError("")
+          setIsPollingStatus(false)
+          setSearchId(null)
+          return
+        }
+
+        if (normalizedStatus === "failed") {
+          setSearchError(statusResponse.error || statusResponse.message || "Discovery failed. Please try again.")
+          setIsDiscovering(false)
+          setIsProcessing(false)
+          setIsPollingStatus(false)
+          setSearchId(null)
+          return
+        }
+
+        if (Date.now() - pollStartedAt > DEAL_STATUS_POLL_TIMEOUT_MS) {
+          setSearchError("Discovery is taking longer than expected. Please try again.")
+          setSearchStatus("failed")
+          setIsDiscovering(false)
+          setIsProcessing(false)
+          setIsPollingStatus(false)
+          setSearchId(null)
+          return
+        }
+
+        timeoutId = window.setTimeout(pollStatus, DEAL_STATUS_POLL_INTERVAL_MS)
+      } catch (error) {
+        if (cancelled) return
+        console.error("Failed to poll deal search status", error)
+        setSearchError("Unable to check discovery status. Please try again.")
+        setSearchStatus("failed")
+        setIsDiscovering(false)
+        setIsProcessing(false)
+        setIsPollingStatus(false)
+        setSearchId(null)
+      }
+    }
+
+    pollStatus()
+
+    return () => {
+      cancelled = true
+      if (timeoutId) {
+        window.clearTimeout(timeoutId)
+      }
+      setIsPollingStatus(false)
+    }
+  }, [searchId])
+
   const handleProcessFiles = async () => {
     if (!selectedTalent) {
       alert("Please select a talent profile first")
@@ -191,18 +312,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     setIsDiscovering(true)
   }
 
-  const handleDiscoveryComplete = (discoveredDeals: Deal[]) => {
-    setDeals(discoveredDeals)
-    setIsDiscovering(false)
-    setIsProcessing(false)
-  }
-
-  const handleSessionComplete = (session: any) => {
-    console.log("Discovery session completed:", session)
-    setIsDiscovering(false)
-  }
-
-  const handleStartDiscovery = () => {
+  const handleStartDiscovery = async () => {
     if (!selectedTalent) {
       alert("Please select a talent profile first")
       return
@@ -213,8 +323,45 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       setIsDriveModalOpen(true)
       return
     }
-    setShowDiscoveryEngine(true)
-    setIsDiscovering(true)
+
+    if (activeTool !== "deal-hunter") {
+      setShowDiscoveryEngine(true)
+      setIsDiscovering(true)
+      return
+    }
+
+    try {
+      setSearchError("")
+      setDeals([])
+      setFilteredDeals([])
+      setShowDiscoveryEngine(true)
+      setIsDiscovering(true)
+      setSearchStatus("queued")
+      setSearchStartedAt(new Date().toISOString())
+      setSearchCompletedAt(undefined)
+
+      const promptParts: string[] = [
+        `Analyze Google Drive folder contents for ${selectedTalent.name}.`,
+        "Identify brand partnership and sponsorship opportunities.",
+      ]
+      if (selectedTalent.category) {
+        promptParts.push(`Talent category: ${selectedTalent.category}.`)
+      }
+      const prompt = promptParts.join(" ")
+
+      const response = await initiateDealSearch({
+        drive_link: driveFolderLink,
+        prompt,
+      })
+
+      setSearchId(response.search_id)
+      setSearchStatus((response.status as SearchStatus) || "queued")
+    } catch (error) {
+      console.error("Failed to initiate deal search", error)
+      setSearchError("Failed to start discovery. Please try again.")
+      setIsDiscovering(false)
+      setSearchStatus("failed")
+    }
   }
 
   const availableCategories = Array.from(new Set(mockDeals.map((deal) => deal.category)))
@@ -293,13 +440,15 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       default:
         return (
           <>
-            {showDiscoveryEngine && selectedTalent && (
+            {showDiscoveryEngine && (
               <div className="mx-10">
-                <AIDealDiscoveryEngine
-                  selectedTalent={selectedTalent}
-                  query="Find brand partnership deals for this talent"
-                  onDealsFound={handleDiscoveryComplete}
-                  onSessionComplete={handleSessionComplete}
+                <DealHunterDiscoveryTimeline
+                  status={searchStatus}
+                  startedAt={searchStartedAt}
+                  completedAt={searchCompletedAt}
+                  deals={deals}
+                  isPolling={isPollingStatus}
+                  error={searchError}
                 />
               </div>
             )}
@@ -434,14 +583,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             onFilesChange={handleFilesChange}
             onProcessFiles={handleProcessFiles}
             talentId={selectedTalent?.id}
-            uploadDisabled
-            onRequestUpload={() => {
-              setDriveLinkInput(driveFolderLink)
-              setDriveLinkError("")
-              setIsDriveModalOpen(true)
-            }}
-            disabledHelperText="Connect a shared Google Drive folder instead of uploading files."
-            disabledCtaLabel="Set Google Drive Folder"
           />
 
           {completedFiles.length > 0 && (
