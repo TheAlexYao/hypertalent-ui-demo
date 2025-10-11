@@ -5,7 +5,7 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 
 import { API_BASE_URL } from "@/lib/config"
-import { getAuthStatus } from "@/services/deal-hunter-api"
+import { getAuthStatus, getGoogleAuthUrl } from "@/services/deal-hunter-api"
 
 interface User {
   email?: string
@@ -65,6 +65,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signIn = async () => {
     setIsLoading(true)
+    try {
+      const response = await getGoogleAuthUrl()
+      if (response?.authorization_url) {
+        window.location.href = response.authorization_url
+        return
+      }
+    } catch (error) {
+      console.error("Failed to fetch Google auth URL, falling back to direct redirect", error)
+    }
+
+    setIsLoading(false)
     window.location.href = `${API_BASE_URL}/auth/login`
   }
 
