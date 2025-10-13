@@ -22,7 +22,14 @@ export async function GET() {
     const redirectUrl = data?.authorization_url
 
     if (redirectUrl) {
-      return NextResponse.redirect(redirectUrl)
+      const proxyResponse = NextResponse.redirect(redirectUrl)
+      const setCookieHeader = response.headers.get("set-cookie")
+
+      if (setCookieHeader) {
+        proxyResponse.headers.append("set-cookie", setCookieHeader)
+      }
+
+      return proxyResponse
     }
 
     return NextResponse.json(data)

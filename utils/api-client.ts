@@ -1,4 +1,5 @@
 import { API_BASE_URL, API_REQUEST_TIMEOUT_MS, isDevelopment } from "@/lib/config"
+import { getSessionId } from "@/lib/session"
 
 type ApiFetchOptions = RequestInit & {
   timeoutMs?: number
@@ -45,6 +46,11 @@ export async function apiFetch<TResponse = unknown>(
     const isJsonBody = options.body && !(options.body instanceof FormData)
     if (isJsonBody && !headers.has("Content-Type")) {
       headers.set("Content-Type", "application/json")
+    }
+
+    const sessionId = getSessionId()
+    if (sessionId && !headers.has("X-Session-ID")) {
+      headers.set("X-Session-ID", sessionId)
     }
 
     const response = await fetch(url, {

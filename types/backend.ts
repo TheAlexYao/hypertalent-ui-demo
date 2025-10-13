@@ -93,4 +93,5 @@ export interface AuthStatusResponse {
   email?: string
   name?: string
   message?: string
+  session_id?: string
 }

@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from "react"
 
 import { API_BASE_URL } from "@/lib/config"
 import { getAuthStatus } from "@/services/deal-hunter-api"
+import { getSessionId, setSessionId, clearSessionId } from "@/lib/session"
 
 interface User {
   email?: string
@@ -17,6 +18,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
+  sessionId: string | null
   signIn: () => Promise<void>
   signOut: () => Promise<void>
   refreshSession: () => Promise<void>
@@ -39,6 +41,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [sessionId, setSessionIdState] = useState<string | null>(() => getSessionId())
 
   useEffect(() => {
     const checkSession = async () => {
@@ -49,12 +52,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
             email: status.email,
             name: status.name || status.email,
           })
+          if (status.session_id) {
+            setSessionId(status.session_id)
+            setSessionIdState(status.session_id)
+          }
         } else {
           setUser(null)
+          clearSessionId()
+          setSessionIdState(null)
         }
       } catch (error) {
         console.error("Session check failed:", error)
         setUser(null)
+        clearSessionId()
+        setSessionIdState(null)
       } finally {
         setIsLoading(false)
       }
@@ -79,6 +90,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = async () => {
     setIsLoading(true)
     setUser(null)
+    clearSessionId()
+    setSessionIdState(null)
     window.location.href = `${API_BASE_URL}/auth/login?logout=1`
   }
 
@@ -90,12 +103,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           email: status.email,
           name: status.name || status.email,
         })
+        if (status.session_id) {
+          setSessionId(status.session_id)
+          setSessionIdState(status.session_id)
+        }
       } else {
         setUser(null)
+        clearSessionId()
+        setSessionIdState(null)
       }
     } catch (error) {
       console.error("Session refresh failed:", error)
       setUser(null)
+      clearSessionId()
+      setSessionIdState(null)
     }
   }
 
@@ -103,6 +124,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     isLoading,
     isAuthenticated: !!user,
+    sessionId,
     signIn,
     signOut,
     refreshSession,
