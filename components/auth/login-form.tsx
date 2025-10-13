@@ -5,14 +5,22 @@ import type React from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Target, Loader2, AlertCircle, LogIn } from "lucide-react"
+import { Target, Loader2, AlertCircle, LogIn, ExternalLink } from "lucide-react"
 import { useAuth } from "./auth-provider"
+import { useState } from "react"
 
 export function LoginForm() {
   const { signIn, isLoading } = useAuth()
+  const [error, setError] = useState<string>("")
 
   const handleGoogleSignIn = async () => {
-    await signIn()
+    setError("")
+    try {
+      await signIn()
+    } catch (err) {
+      console.error(err)
+      setError("Google sign-in failed. Please try again.")
+    }
   }
 
   return (
@@ -38,6 +46,13 @@ export function LoginForm() {
         </div>
 
         <div className="space-y-4">
+          <div className="rounded-md border border-border/60 bg-muted/30 p-3 text-xs text-muted-foreground flex gap-2">
+            <ExternalLink className="w-4 h-4 mt-0.5" />
+            <p>
+              We&#39;ll open Google sign-in in a new tab. Approve access, then return here—your session will update
+              automatically.
+            </p>
+          </div>
           <p className="text-sm text-muted-foreground text-center">
             Continue to Google to authenticate and return to Deal Hunter automatically.
           </p>
@@ -45,6 +60,7 @@ export function LoginForm() {
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
             {isLoading ? "Redirecting..." : "Sign in with Google"}
           </Button>
+          {error && <p className="text-xs text-destructive text-center">{error}</p>}
         </div>
       </Card>
     </div>

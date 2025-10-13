@@ -7,6 +7,7 @@ import { createContext, useContext, useEffect, useState } from "react"
 import { API_BASE_URL } from "@/lib/config"
 import { getAuthStatus } from "@/services/deal-hunter-api"
 import { getSessionId, setSessionId, clearSessionId } from "@/lib/session"
+import type { AuthStatusResponse } from "@/types/backend"
 
 interface User {
   email?: string
@@ -43,24 +44,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [sessionId, setSessionIdState] = useState<string | null>(() => getSessionId())
 
+  const applyAuthStatus = (status: AuthStatusResponse) => {
+    if (status.authenticated) {
+      setUser({
+        email: status.email,
+        name: status.name || status.email,
+      })
+      if (status.session_id) {
+        setSessionId(status.session_id)
+        setSessionIdState(status.session_id)
+      }
+    } else {
+      setUser(null)
+      clearSessionId()
+      setSessionIdState(null)
+    }
+  }
+
+  const pollAuthStatus = async (timeoutMs = 60_000, intervalMs = 1_500) => {
+    const start = Date.now()
+    while (Date.now() - start < timeoutMs) {
+      try {
+        const status = await getAuthStatus()
+        if (status.authenticated) {
+          applyAuthStatus(status)
+          return
+        }
+      } catch (error) {
+        console.error("Auth status polling failed:", error)
+      }
+      await new Promise((resolve) => setTimeout(resolve, intervalMs))
+    }
+    throw new Error("Authentication timed out. Please complete Google sign-in and try again.")
+  }
+
   useEffect(() => {
     const checkSession = async () => {
       try {
         const status = await getAuthStatus()
-        if (status.authenticated) {
-          setUser({
-            email: status.email,
-            name: status.name || status.email,
-          })
-          if (status.session_id) {
-            setSessionId(status.session_id)
-            setSessionIdState(status.session_id)
-          }
-        } else {
-          setUser(null)
-          clearSessionId()
-          setSessionIdState(null)
-        }
+        applyAuthStatus(status)
       } catch (error) {
         console.error("Session check failed:", error)
         setUser(null)
@@ -77,14 +99,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async () => {
     setIsLoading(true)
     try {
-      window.location.href = "/api/auth/login"
+      const authWindow = window.open(
+        "/api/auth/login",
+        "hypertalent-google-auth",
+        "width=520,height=680,noopener,noreferrer",
+      )
+
+      if (!authWindow) {
+        window.location.href = "/api/auth/login"
+        return
+      }
+
+      try {
+        await pollAuthStatus()
+      } finally {
+        try {
+          authWindow.close()
+        } catch (error) {
+          console.warn("Unable to close auth window", error)
+        }
+      }
+
+      setIsLoading(false)
       return
     } catch (error) {
-      console.error("Failed to fetch Google auth URL, falling back to direct redirect", error)
+      console.error("Failed to complete Google authentication", error)
+      setIsLoading(false)
+      window.location.href = `${API_BASE_URL}/auth/login`
     }
-
-    setIsLoading(false)
-    window.location.href = `${API_BASE_URL}/auth/login`
   }
 
   const signOut = async () => {
@@ -98,20 +140,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshSession = async () => {
     try {
       const status = await getAuthStatus()
-      if (status.authenticated) {
-        setUser({
-          email: status.email,
-          name: status.name || status.email,
-        })
-        if (status.session_id) {
-          setSessionId(status.session_id)
-          setSessionIdState(status.session_id)
-        }
-      } else {
-        setUser(null)
-        clearSessionId()
-        setSessionIdState(null)
-      }
+      applyAuthStatus(status)
     } catch (error) {
       console.error("Session refresh failed:", error)
       setUser(null)
