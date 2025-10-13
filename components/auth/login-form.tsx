@@ -19,7 +19,11 @@ export function LoginForm() {
       await signIn()
     } catch (err) {
       console.error(err)
-      setError("Google sign-in failed. Please try again.")
+      if (err instanceof Error && err.message.includes("Pop-up blocked")) {
+        setError("Enable pop-ups for this site to continue with Google sign-in.")
+      } else {
+        setError("Google sign-in failed. Please try again.")
+      }
     }
   }
 

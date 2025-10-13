@@ -99,15 +99,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async () => {
     setIsLoading(true)
     try {
-      const authWindow = window.open(
-        "/api/auth/login",
-        "hypertalent-google-auth",
-        "width=520,height=680,noopener,noreferrer",
-      )
+      const authWindow = window.open("/api/auth/login", "hypertalent-google-auth", "width=520,height=680")
 
       if (!authWindow) {
-        window.location.href = "/api/auth/login"
-        return
+        throw new Error("Pop-up blocked. Allow pop-ups for this site to continue.")
+      }
+
+      try {
+        authWindow.opener = null
+        authWindow.focus()
+      } catch (error) {
+        console.warn("Unable to adjust auth window", error)
       }
 
       try {
@@ -119,13 +121,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.warn("Unable to close auth window", error)
         }
       }
-
-      setIsLoading(false)
-      return
     } catch (error) {
       console.error("Failed to complete Google authentication", error)
+      throw error
+    } finally {
       setIsLoading(false)
-      window.location.href = `${API_BASE_URL}/auth/login`
     }
   }
 
