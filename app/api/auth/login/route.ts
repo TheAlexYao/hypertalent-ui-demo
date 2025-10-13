@@ -1,15 +1,29 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 
-import { API_BASE_URL } from "@/lib/config"
+import { BACKEND_API_BASE_URL } from "@/lib/config"
 
 export const dynamic = "force-dynamic"
 
-export async function GET() {
+const LOGIN_ENDPOINT = "/auth/login"
+
+const collectCookies = (response: Response) =>
+  (response.headers as unknown as { raw?: () => Record<string, string[]> }).raw?.()?.["set-cookie"]
+
+export async function GET(request: NextRequest) {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      headers: {
-        Accept: "application/json",
-      },
+    const targetUrl = new URL(LOGIN_ENDPOINT, BACKEND_API_BASE_URL)
+    targetUrl.search = request.nextUrl.search
+
+    const headers = new Headers({ Accept: "application/json" })
+    const cookieHeader = request.headers.get("cookie")
+    if (cookieHeader) {
+      headers.set("cookie", cookieHeader)
+    }
+
+    const response = await fetch(targetUrl, {
+      method: "GET",
+      headers,
+      redirect: "manual",
       cache: "no-store",
     })
 
@@ -22,17 +36,24 @@ export async function GET() {
     const redirectUrl = data?.authorization_url
 
     if (redirectUrl) {
-      const proxyResponse = NextResponse.redirect(redirectUrl)
-      const setCookieHeader = response.headers.get("set-cookie")
+      const proxyResponse = NextResponse.redirect(redirectUrl, { status: 302 })
+      const setCookieHeaders = collectCookies(response)
 
-      if (setCookieHeader) {
-        proxyResponse.headers.append("set-cookie", setCookieHeader)
+      if (setCookieHeaders && Array.isArray(setCookieHeaders)) {
+        setCookieHeaders.forEach((cookie) => proxyResponse.headers.append("set-cookie", cookie))
       }
 
       return proxyResponse
     }
 
-    return NextResponse.json(data)
+    const jsonResponse = NextResponse.json(data, { status: response.status })
+    const setCookieHeaders = collectCookies(response)
+
+    if (setCookieHeaders && Array.isArray(setCookieHeaders)) {
+      setCookieHeaders.forEach((cookie) => jsonResponse.headers.append("set-cookie", cookie))
+    }
+
+    return jsonResponse
   } catch (error: unknown) {
     console.error("Failed to proxy Google OAuth login", error)
     return NextResponse.json({ error: "Failed to initiate Google OAuth." }, { status: 500 })
