@@ -17,8 +17,31 @@ const resolveDefaultClientBaseUrl = () => {
 
 const defaultClientBaseUrl = resolveDefaultClientBaseUrl()
 
-export const API_BASE_URL =
-  envPublicBaseUrl && envPublicBaseUrl.trim().length > 0 ? normalizeUrl(envPublicBaseUrl) : defaultClientBaseUrl
+const computeClientBaseUrl = (): string => {
+  const trimmedEnv = envPublicBaseUrl?.trim()
+  if (trimmedEnv && trimmedEnv.length > 0) {
+    const normalized = normalizeUrl(trimmedEnv)
+
+    if (typeof window !== "undefined") {
+      const pageIsHttps = window.location?.protocol === "https:"
+      const targetsDefaultBackend = normalized.includes("hypertalent-backend-alb-508528901.us-east-1.elb.amazonaws.com")
+
+      if (pageIsHttps && targetsDefaultBackend) {
+        return "/api/backend"
+      }
+
+      if (pageIsHttps && normalized.startsWith("http://")) {
+        return "/api/backend"
+      }
+    }
+
+    return normalized
+  }
+
+  return defaultClientBaseUrl
+}
+
+export const API_BASE_URL = computeClientBaseUrl()
 
 export const API_REQUEST_TIMEOUT_MS = 30_000
 export const DEAL_STATUS_POLL_INTERVAL_MS = 2_500
