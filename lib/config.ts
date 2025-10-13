@@ -1,4 +1,7 @@
-const DEFAULT_API_BASE_URL = "http://hypertalent-backend-alb-508528901.us-east-1.elb.amazonaws.com"
+const HTTP_API_BASE_URL = "http://hypertalent-backend-alb-508528901.us-east-1.elb.amazonaws.com"
+const HTTPS_API_BASE_URL = "https://hypertalent-backend-alb-508528901.us-east-1.elb.amazonaws.com"
+
+const DEFAULT_API_BASE_URL = process.env.NODE_ENV === "production" ? HTTPS_API_BASE_URL : HTTP_API_BASE_URL
 
 const normalizeUrl = (url: string) => url.replace(/\/+$/, "")
 
