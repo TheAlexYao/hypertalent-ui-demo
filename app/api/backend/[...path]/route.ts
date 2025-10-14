@@ -93,8 +93,102 @@ const buildBackendUrl = (segments: string[] = [], searchParams: string) => {
   return url
 }
 
+const proxyAuthCallback = async (request: NextRequest, path: string[]) => {
+  const targetUrl = buildBackendUrl(path, request.nextUrl.search)
+  const headers = filterRequestHeaders(request)
+
+  const backendResponse = await fetch(targetUrl, {
+    method: request.method,
+    headers,
+    redirect: "manual",
+  })
+
+  const responseHeaders = filterResponseHeaders(backendResponse)
+  const contentType = backendResponse.headers.get("content-type") ?? ""
+  const rawBody = await backendResponse.arrayBuffer()
+
+  let responseData: unknown = null
+  if (contentType.includes("application/json")) {
+    try {
+      responseData = JSON.parse(Buffer.from(rawBody).toString("utf-8"))
+    } catch (error) {
+      console.warn("Failed to parse auth callback JSON", error)
+    }
+  }
+
+  const sessionId =
+    typeof responseData === "object" && responseData !== null && "session_id" in responseData
+      ? (responseData as Record<string, unknown>).session_id
+      : undefined
+
+  if (!backendResponse.ok) {
+    return new NextResponse(rawBody, {
+      status: backendResponse.status,
+      headers: responseHeaders,
+    })
+  }
+
+  const targetOrigin = request.nextUrl.origin
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Authentication Complete</title>
+  </head>
+  <body>
+    <p>Authentication successful. You can close this window.</p>
+    <script>
+      (function () {
+        var payload = ${JSON.stringify(responseData ?? null)};
+        var sessionId = ${sessionId ? JSON.stringify(sessionId) : "null"};
+        try {
+          if (sessionId) {
+            localStorage.setItem("hyper-talent-session-id", sessionId);
+          }
+        } catch (error) {
+          console.warn("Unable to persist session ID", error);
+        }
+        try {
+          if (window.opener) {
+            window.opener.postMessage(
+              {
+                type: "hypertalent-auth",
+                payload: payload,
+                sessionId: sessionId,
+              },
+              ${JSON.stringify(targetOrigin)}
+            );
+          }
+        } catch (error) {
+          console.warn("Unable to notify opener window", error);
+        }
+        try {
+          window.close();
+        } catch (error) {
+          console.warn("Unable to close auth window", error);
+        }
+      })();
+    </script>
+  </body>
+</html>`
+
+  const htmlResponse = new NextResponse(html, {
+    status: 200,
+    headers: responseHeaders,
+  })
+  htmlResponse.headers.set("content-type", "text/html; charset=utf-8")
+
+  return htmlResponse
+}
+
 const proxyRequest = async (request: NextRequest, context: RouteContext) => {
-  const targetUrl = buildBackendUrl(context.params.path, request.nextUrl.search)
+  const pathSegments = context.params.path ?? []
+  const targetUrl = buildBackendUrl(pathSegments, request.nextUrl.search)
+
+  if (pathSegments.length >= 2 && pathSegments[0] === "auth" && pathSegments[1] === "callback") {
+    return proxyAuthCallback(request, pathSegments)
+  }
 
   const headers = filterRequestHeaders(request)
 
