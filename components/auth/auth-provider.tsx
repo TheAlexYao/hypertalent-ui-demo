@@ -6,7 +6,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 
 import { API_BASE_URL } from "@/lib/config"
 import { getAuthStatus } from "@/services/deal-hunter-api"
-import { getSessionId, setSessionId, clearSessionId, hydrateSessionId } from "@/lib/session"
+import { getSessionId, setSessionId, clearSessionId } from "@/lib/session"
 import type { AuthStatusResponse } from "@/types/backend"
 
 interface User {
@@ -80,8 +80,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const synchronizeSessionFromSignal = useCallback(
     (nextSessionId: string | null) => {
-      hydrateSessionId(nextSessionId)
-      setSessionIdState((previous) => (previous === nextSessionId ? previous : nextSessionId))
+      if (nextSessionId) {
+        setSessionId(nextSessionId)
+        setSessionIdState((previous) => (previous === nextSessionId ? previous : nextSessionId))
+      } else {
+        clearSessionId()
+        setSessionIdState((previous) => (previous === null ? previous : null))
+      }
 
       getAuthStatus()
         .then(applyAuthStatus)
@@ -89,12 +94,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.error("Auth status refresh failed after session signal:", error)
           if (!nextSessionId) {
             setUser(null)
-            clearSessionId()
-            setSessionIdState(null)
           }
         })
     },
-    [applyAuthStatus, clearSessionId, setSessionIdState, setUser],
+    [applyAuthStatus, clearSessionId, setSessionId, setSessionIdState, setUser],
   )
 
   const pollAuthStatus = async (timeoutMs = 60_000, intervalMs = 1_500) => {
@@ -172,7 +175,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (typeof window.BroadcastChannel === "function") {
       authChannel = new BroadcastChannel("hypertalent-auth")
       handleBroadcast = (event: MessageEvent) => {
-        const nextSessionId = resolveSessionId(event.data)
+        const data = event.data
+        if (!data || typeof data !== "object" || (data as { type?: string }).type !== "hypertalent-auth") {
+          return
+        }
+
+        const nextSessionId = resolveSessionId(data)
         if (nextSessionId === sessionId) {
           return
         }

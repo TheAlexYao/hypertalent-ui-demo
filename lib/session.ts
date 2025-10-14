@@ -15,10 +15,6 @@ export const getSessionId = (): string | null => {
   return memorySessionId
 }
 
-export const hydrateSessionId = (value: string | null) => {
-  setMemorySessionId(value)
-}
-
 export const setSessionId = (value: string | null) => {
   setMemorySessionId(value)
   if (!isBrowser()) return

@@ -15,6 +15,25 @@ export async function GET(request: NextRequest) {
     targetUrl.search = request.nextUrl.search
 
     const headers = new Headers({ Accept: "application/json" })
+    const forwardedHost = request.headers.get("x-forwarded-host") ?? request.headers.get("host") ?? request.nextUrl.host
+    const forwardedProto =
+      request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(/:$/, "") ?? "https"
+    const forwardedPort = request.headers.get("x-forwarded-port")
+    const forwardedFor = request.headers.get("x-forwarded-for")
+
+    if (forwardedHost) {
+      headers.set("x-forwarded-host", forwardedHost)
+    }
+    if (forwardedProto) {
+      headers.set("x-forwarded-proto", forwardedProto)
+    }
+    if (forwardedPort) {
+      headers.set("x-forwarded-port", forwardedPort)
+    }
+    if (forwardedFor) {
+      headers.set("x-forwarded-for", forwardedFor)
+    }
+    headers.set("origin", request.nextUrl.origin)
     const cookieHeader = request.headers.get("cookie")
     if (cookieHeader) {
       headers.set("cookie", cookieHeader)
