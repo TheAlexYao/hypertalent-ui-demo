@@ -145,6 +145,8 @@ const proxyAuthCallback = async (request: NextRequest, path: string[]) => {
         try {
           if (sessionId) {
             localStorage.setItem("hyper-talent-session-id", sessionId);
+          } else {
+            localStorage.removeItem("hyper-talent-session-id");
           }
         } catch (error) {
           console.warn("Unable to persist session ID", error);
@@ -162,6 +164,20 @@ const proxyAuthCallback = async (request: NextRequest, path: string[]) => {
           }
         } catch (error) {
           console.warn("Unable to notify opener window", error);
+        }
+        try {
+          if (typeof BroadcastChannel !== "undefined") {
+            var authChannel = new BroadcastChannel("hypertalent-auth");
+            authChannel.postMessage({
+              type: "hypertalent-auth",
+              payload: payload,
+              sessionId: sessionId,
+              timestamp: Date.now()
+            });
+            authChannel.close();
+          }
+        } catch (error) {
+          console.warn("Unable to broadcast auth state", error);
         }
         try {
           window.close();

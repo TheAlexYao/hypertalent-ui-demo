@@ -2,11 +2,11 @@
 
 import type React from "react"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState, useCallback } from "react"
 
 import { API_BASE_URL } from "@/lib/config"
 import { getAuthStatus } from "@/services/deal-hunter-api"
-import { getSessionId, setSessionId, clearSessionId } from "@/lib/session"
+import { getSessionId, setSessionId, clearSessionId, hydrateSessionId } from "@/lib/session"
 import type { AuthStatusResponse } from "@/types/backend"
 
 interface User {
@@ -44,6 +44,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [sessionId, setSessionIdState] = useState<string | null>(() => getSessionId())
 
+  const resolveSessionId = useCallback((data: unknown): string | null => {
+    if (!data || typeof data !== "object") {
+      return typeof data === "string" && data.length > 0 ? data : null
+    }
+
+    if (typeof (data as { sessionId?: unknown }).sessionId === "string") {
+      return (data as { sessionId: string }).sessionId
+    }
+
+    const payload = (data as { payload?: unknown }).payload
+    if (payload && typeof payload === "object" && payload !== null && typeof (payload as { session_id?: unknown }).session_id === "string") {
+      return (payload as { session_id: string }).session_id
+    }
+
+    return null
+  }, [])
+
   const applyAuthStatus = (status: AuthStatusResponse) => {
     if (status.authenticated) {
       setUser({
@@ -60,6 +77,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setSessionIdState(null)
     }
   }
+
+  const synchronizeSessionFromSignal = useCallback(
+    (nextSessionId: string | null) => {
+      hydrateSessionId(nextSessionId)
+      setSessionIdState((previous) => (previous === nextSessionId ? previous : nextSessionId))
+
+      getAuthStatus()
+        .then(applyAuthStatus)
+        .catch((error) => {
+          console.error("Auth status refresh failed after session signal:", error)
+          if (!nextSessionId) {
+            setUser(null)
+            clearSessionId()
+            setSessionIdState(null)
+          }
+        })
+    },
+    [applyAuthStatus, clearSessionId, setSessionIdState, setUser],
+  )
 
   const pollAuthStatus = async (timeoutMs = 60_000, intervalMs = 1_500) => {
     const start = Date.now()
@@ -104,28 +140,57 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const data = event.data
       if (!data || typeof data !== "object" || data.type !== "hypertalent-auth") return
 
-      const sessionIdFromMessage =
-        typeof data.sessionId === "string"
-          ? data.sessionId
-          : typeof data.payload === "object" && data.payload !== null && typeof data.payload.session_id === "string"
-            ? data.payload.session_id
-            : null
-
-      if (sessionIdFromMessage) {
-        setSessionId(sessionIdFromMessage)
-        setSessionIdState(sessionIdFromMessage)
+      const sessionIdFromMessage = resolveSessionId(data)
+      if (sessionIdFromMessage === sessionId) {
+        return
       }
 
-      getAuthStatus()
-        .then(applyAuthStatus)
-        .catch((error) => {
-          console.error("Auth status refresh failed after popup message:", error)
-        })
+      synchronizeSessionFromSignal(sessionIdFromMessage)
     }
 
     window.addEventListener("message", handleAuthMessage)
     return () => window.removeEventListener("message", handleAuthMessage)
-  }, [])
+  }, [resolveSessionId, sessionId, synchronizeSessionFromSignal])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== "hyper-talent-session-id") return
+      const nextSessionId = typeof event.newValue === "string" && event.newValue.length > 0 ? event.newValue : null
+      if (nextSessionId === sessionId) {
+        return
+      }
+      synchronizeSessionFromSignal(nextSessionId)
+    }
+
+    window.addEventListener("storage", handleStorage)
+
+    let authChannel: BroadcastChannel | null = null
+    let handleBroadcast: ((event: MessageEvent) => void) | null = null
+
+    if (typeof window.BroadcastChannel === "function") {
+      authChannel = new BroadcastChannel("hypertalent-auth")
+      handleBroadcast = (event: MessageEvent) => {
+        const nextSessionId = resolveSessionId(event.data)
+        if (nextSessionId === sessionId) {
+          return
+        }
+        synchronizeSessionFromSignal(nextSessionId)
+      }
+      authChannel.addEventListener("message", handleBroadcast)
+    }
+
+    return () => {
+      window.removeEventListener("storage", handleStorage)
+      if (authChannel && handleBroadcast) {
+        authChannel.removeEventListener("message", handleBroadcast)
+        authChannel.close()
+      } else if (authChannel) {
+        authChannel.close()
+      }
+    }
+  }, [resolveSessionId, sessionId, synchronizeSessionFromSignal])
 
   const signIn = async () => {
     setIsLoading(true)
