@@ -96,6 +96,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
     checkSession()
   }, [])
 
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const handleAuthMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return
+      const data = event.data
+      if (!data || typeof data !== "object" || data.type !== "hypertalent-auth") return
+
+      const sessionIdFromMessage =
+        typeof data.sessionId === "string"
+          ? data.sessionId
+          : typeof data.payload === "object" && data.payload !== null && typeof data.payload.session_id === "string"
+            ? data.payload.session_id
+            : null
+
+      if (sessionIdFromMessage) {
+        setSessionId(sessionIdFromMessage)
+        setSessionIdState(sessionIdFromMessage)
+      }
+
+      getAuthStatus()
+        .then(applyAuthStatus)
+        .catch((error) => {
+          console.error("Auth status refresh failed after popup message:", error)
+        })
+    }
+
+    window.addEventListener("message", handleAuthMessage)
+    return () => window.removeEventListener("message", handleAuthMessage)
+  }, [])
+
   const signIn = async () => {
     setIsLoading(true)
     try {
