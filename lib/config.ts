@@ -45,6 +45,6 @@ export const API_BASE_URL = computeClientBaseUrl()
 
 export const API_REQUEST_TIMEOUT_MS = 30_000
 export const DEAL_STATUS_POLL_INTERVAL_MS = 2_500
-export const DEAL_STATUS_POLL_TIMEOUT_MS = 120_000
+export const DEAL_STATUS_POLL_TIMEOUT_MS = 600_000
 
 export const isDevelopment = process.env.NODE_ENV !== "production"
