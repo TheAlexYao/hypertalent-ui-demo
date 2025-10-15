@@ -273,6 +273,8 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         url = (response as any).url
       } else if (response && typeof (response as any).spreadsheetUrl === "string") {
         url = (response as any).spreadsheetUrl
+      } else if (response && typeof (response as any).spreadsheet_url === "string") {
+        url = (response as any).spreadsheet_url
       }
 
       if (url) {
@@ -320,8 +322,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           setIsProcessing(false)
           setSearchCompletedAt(statusResponse.completed_at || new Date().toISOString())
           setSearchError("")
-          if (statusResponse.spreadsheet_url) {
-            setSpreadsheetUrl(statusResponse.spreadsheet_url)
+          const spreadsheetFromStatus = statusResponse.spreadsheet_url || statusResponse.sheet_url
+          if (spreadsheetFromStatus) {
+            setSpreadsheetUrl(spreadsheetFromStatus)
             sheetRequestRef.current = true
           } else if (!sheetRequestRef.current) {
             generateSpreadsheet()

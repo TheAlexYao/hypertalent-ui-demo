@@ -46,6 +46,7 @@ export interface DealSearchStatusResponse {
   deals?: BackendDeal[]
   insights?: string[]
   spreadsheet_url?: string
+  sheet_url?: string
   error?: string
 }
 
