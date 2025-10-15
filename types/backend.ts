@@ -7,29 +7,7 @@ export interface DealSearchPayload {
   exclude_industries?: string[] | null
 }
 
-export type DealSearchStatus =
-  | "queued"
-  | "pending"
-  | "waiting"
-  | "in_progress"
-  | "processing"
-  | "running"
-  | "started"
-  | "active"
-  | "complete"
-  | "completed"
-  | "success"
-  | "succeeded"
-  | "done"
-  | "finished"
-  | "failed"
-  | "failure"
-  | "error"
-  | "errored"
-  | "cancelled"
-  | "canceled"
-  | "aborted"
-;
+export type DealSearchStatus = string
 
 export interface DealSearchResponse {
   search_id: string

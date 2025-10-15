@@ -3,7 +3,6 @@ import { FileText, CheckCircle, Link as LinkIcon, AlertCircle, FileSpreadsheet, 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { FileUploadZone, type UploadedFile } from "./file-upload-zone"
 import { TalentSelector, type TalentProfile } from "./talent-selector"
-import type { DealFilters as DealFiltersType } from "./deal-filters"
 import { DealDetailsModal } from "./deal-details-modal"
 import { OutreachModal } from "./outreach-modal"
 import { ExportModal } from "./export-modal"
@@ -20,129 +19,49 @@ import { Card } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { DealHunterDiscoveryTimeline } from "./deal-hunter-discovery-timeline"
+import { Progress } from "@/components/ui/progress"
 import { DEAL_STATUS_POLL_INTERVAL_MS, DEAL_STATUS_POLL_TIMEOUT_MS } from "@/lib/config"
 import { getDealSearchStatus, initiateDealSearch, createDealsSpreadsheet } from "@/services/deal-hunter-api"
 import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
-
-const mockDeals: Deal[] = [
-  {
-    id: "deal-1",
-    brand: "Nike",
-    title: "Nike Partnership",
-    category: "Athletic Apparel",
-    valueRange: "$50K-100K",
-    matchScore: 9.2,
-    description: "High-value endorsement opportunity for athletic wear and footwear with global reach",
-    tags: ["Sports", "Apparel", "Global"],
-    deadline: "2025-03-15",
-    requirements: ["Social media presence", "Athletic performance", "Brand alignment"],
-    engagement: 4.8,
-    reach: "2.5M",
-    conversions: "3.2%",
-    industry: "Sports & Recreation",
-    companySize: "Large Enterprise",
-    duration: "12 months",
-    startDate: "2025-02-01",
-    contact: {
-      name: "Sarah Johnson",
-      email: "partnerships@nike.com",
-      department: "Global Partnerships",
-    },
-    status: "new",
-    createdAt: "2025-01-15T10:30:00Z",
-    updatedAt: "2025-01-15T10:30:00Z",
-  },
-  {
-    id: "deal-2",
-    brand: "Gatorade",
-    title: "Sports Nutrition Campaign",
-    category: "Sports Nutrition",
-    valueRange: "$25K-50K",
-    matchScore: 8.7,
-    description: "Social media campaign for new product launch targeting athletic performance",
-    tags: ["Nutrition", "Social Media", "Performance"],
-    deadline: "2025-02-28",
-    requirements: ["Athletic endorsement", "Social engagement", "Video content"],
-    engagement: 5.2,
-    reach: "1.8M",
-    conversions: "4.1%",
-    industry: "Food & Beverage",
-    companySize: "Large Enterprise",
-    duration: "6 months",
-    startDate: "2025-01-20",
-    contact: {
-      name: "Mike Chen",
-      email: "marketing@gatorade.com",
-      department: "Brand Marketing",
-    },
-    status: "new",
-    createdAt: "2025-01-15T10:31:00Z",
-    updatedAt: "2025-01-15T10:31:00Z",
-  },
-  {
-    id: "deal-3",
-    brand: "Under Armour",
-    title: "Training Gear Collaboration",
-    category: "Athletic Apparel",
-    valueRange: "$75K-150K",
-    matchScore: 8.9,
-    description: "Exclusive training gear line collaboration with performance testing and feedback",
-    tags: ["Apparel", "Training", "Collaboration"],
-    deadline: "2025-04-01",
-    requirements: ["Product testing", "Feedback sessions", "Marketing content"],
-    engagement: 4.5,
-    reach: "3.1M",
-    conversions: "2.8%",
-    industry: "Sports & Recreation",
-    companySize: "Large Enterprise",
-    duration: "18 months",
-    startDate: "2025-03-01",
-    contact: {
-      name: "Alex Rivera",
-      email: "partnerships@underarmour.com",
-      department: "Athlete Partnerships",
-    },
-    status: "new",
-    createdAt: "2025-01-15T10:32:00Z",
-    updatedAt: "2025-01-15T10:32:00Z",
-  },
-]
 
 const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
 
 type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
 
-const BACKEND_STATUS_MAP: Record<string, SearchStatus> = {
-  queued: "queued",
-  pending: "queued",
-  waiting: "queued",
-  in_progress: "in_progress",
-  processing: "in_progress",
-  running: "in_progress",
-  started: "in_progress",
-  active: "in_progress",
-  complete: "completed",
-  completed: "completed",
-  success: "completed",
-  succeeded: "completed",
-  done: "completed",
-  finished: "completed",
-  failed: "failed",
-  failure: "failed",
-  error: "failed",
-  errored: "failed",
-  cancelled: "failed",
-  canceled: "failed",
-  aborted: "failed",
-}
-
 const resolveSearchStatus = (response: DealSearchStatusResponse): SearchStatus => {
-  const rawStatus = typeof response.status === "string" ? response.status.toLowerCase() : ""
-  const mappedStatus = BACKEND_STATUS_MAP[rawStatus] ?? "in_progress"
+  const rawStatus = typeof response.status === "string" ? response.status.trim().toLowerCase() : ""
+  const normalized = rawStatus.replace(/\s+/g, "_")
 
-  if (mappedStatus === "completed" || mappedStatus === "failed" || mappedStatus === "queued") {
-    return mappedStatus
+  if (
+    normalized.includes("fail") ||
+    normalized.includes("error") ||
+    normalized.includes("cancel") ||
+    normalized.includes("abort")
+  ) {
+    return "failed"
+  }
+
+  if (
+    normalized.includes("complete") ||
+    normalized.includes("success") ||
+    normalized.includes("done") ||
+    normalized.includes("finish")
+  ) {
+    return "completed"
+  }
+
+  if (normalized.includes("queue") || normalized.includes("wait") || normalized.includes("pending")) {
+    return "queued"
+  }
+
+  if (
+    normalized.includes("progress") ||
+    normalized.includes("process") ||
+    normalized.includes("run") ||
+    normalized.includes("active") ||
+    normalized.includes("start")
+  ) {
+    return "in_progress"
   }
 
   if (response.error) {
@@ -153,7 +72,26 @@ const resolveSearchStatus = (response: DealSearchStatusResponse): SearchStatus =
     return "completed"
   }
 
+  if (Array.isArray(response.deals) && response.deals.length > 0) {
+    return "completed"
+  }
+
+  if (response.progress === 1 || response.progress === 100) {
+    return "completed"
+  }
+
   return "in_progress"
+}
+
+const normalizeProgressValue = (value: number | null | undefined): number | null => {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return null
+  }
+  const scaled = value <= 1 ? value * 100 : value
+  if (!Number.isFinite(scaled)) {
+    return null
+  }
+  return Math.max(0, Math.min(100, scaled))
 }
 
 interface ResultsPanelProps {
@@ -167,7 +105,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const [files, setFiles] = useState<UploadedFile[]>(sharedFiles)
   const [deals, setDeals] = useState<Deal[]>([])
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>([])
-  const [isProcessing, setIsProcessing] = useState(false)
   const [isDiscovering, setIsDiscovering] = useState(false)
   const [showDiscoveryEngine, setShowDiscoveryEngine] = useState(false)
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null)
@@ -184,20 +121,12 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const [searchCompletedAt, setSearchCompletedAt] = useState<string | undefined>()
   const [searchError, setSearchError] = useState<string>("")
   const [isPollingStatus, setIsPollingStatus] = useState(false)
+  const [statusMessage, setStatusMessage] = useState("")
+  const [statusProgress, setStatusProgress] = useState<number | null>(null)
   const [spreadsheetUrl, setSpreadsheetUrl] = useState<string | null>(null)
   const [spreadsheetError, setSpreadsheetError] = useState<string>("")
   const [isGeneratingSpreadsheet, setIsGeneratingSpreadsheet] = useState(false)
   const sheetRequestRef = useRef(false)
-
-  const [filters, setFilters] = useState<DealFiltersType>({
-    search: "",
-    category: "",
-    valueRange: "",
-    minScore: 0,
-    sortBy: "score",
-    sortOrder: "desc",
-    tags: [],
-  })
 
   useEffect(() => {
     setFiles(sharedFiles)
@@ -353,6 +282,16 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
         const normalizedStatus = resolveSearchStatus(statusResponse)
         setSearchStatus(normalizedStatus)
+        if (typeof statusResponse.message === "string" && statusResponse.message.trim().length > 0) {
+          setStatusMessage(statusResponse.message)
+        } else {
+          if (normalizedStatus === "queued") {
+            setStatusMessage("Job queued. Waiting for backend to start.")
+          } else if (normalizedStatus === "in_progress") {
+            setStatusMessage("Analyzing Google Drive documents…")
+          }
+        }
+        setStatusProgress(normalizeProgressValue(statusResponse.progress))
         if (statusResponse.started_at) {
           setSearchStartedAt(statusResponse.started_at)
         }
@@ -362,7 +301,8 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           setDeals(mappedDeals)
           setFilteredDeals(mappedDeals)
           setIsDiscovering(false)
-          setIsProcessing(false)
+          setStatusMessage(statusResponse.message || "Discovery completed successfully.")
+          setStatusProgress(100)
           setSearchCompletedAt(statusResponse.completed_at || new Date().toISOString())
           setSearchError("")
           const spreadsheetFromStatus = statusResponse.spreadsheet_url || statusResponse.sheet_url
@@ -379,9 +319,11 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         }
 
         if (normalizedStatus === "failed") {
-          setSearchError(statusResponse.error || statusResponse.message || "Discovery failed. Please try again.")
+          const failureMessage = statusResponse.error || statusResponse.message || "Discovery failed. Please try again."
+          setSearchError(failureMessage)
+          setStatusMessage(failureMessage)
           setIsDiscovering(false)
-          setIsProcessing(false)
+          setStatusProgress(null)
           setIsPollingStatus(false)
           setSearchId(null)
           sheetRequestRef.current = false
@@ -389,10 +331,12 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         }
 
         if (Date.now() - pollStartedAt > DEAL_STATUS_POLL_TIMEOUT_MS) {
-          setSearchError("Discovery is taking longer than expected. Please try again.")
+          const timeoutMessage = "Discovery is taking longer than expected. Please try again."
+          setSearchError(timeoutMessage)
+          setStatusMessage(timeoutMessage)
           setSearchStatus("failed")
           setIsDiscovering(false)
-          setIsProcessing(false)
+          setStatusProgress(null)
           setIsPollingStatus(false)
           setSearchId(null)
           sheetRequestRef.current = false
@@ -403,10 +347,12 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       } catch (error) {
         if (cancelled) return
         console.error("Failed to poll deal search status", error)
-        setSearchError("Unable to check discovery status. Please try again.")
+        const fallbackMessage = "Unable to check discovery status. Please try again."
+        setSearchError(fallbackMessage)
+        setStatusMessage(fallbackMessage)
         setSearchStatus("failed")
         setIsDiscovering(false)
-        setIsProcessing(false)
+        setStatusProgress(null)
         setIsPollingStatus(false)
         sheetRequestRef.current = false
         setSearchId(null)
@@ -430,7 +376,6 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       return
     }
 
-    setIsProcessing(true)
     setShowDiscoveryEngine(true)
     setIsDiscovering(true)
   }
@@ -454,12 +399,16 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     }
 
     try {
+      setStatusMessage("")
+      setStatusProgress(null)
       setSearchError("")
       setDeals([])
       setFilteredDeals([])
       setShowDiscoveryEngine(true)
       setIsDiscovering(true)
       setSearchStatus("queued")
+      setStatusMessage("Job queued. Waiting for backend to start.")
+      setStatusProgress(0)
       setSearchStartedAt(new Date().toISOString())
       setSearchCompletedAt(undefined)
       setSpreadsheetUrl(null)
@@ -482,18 +431,37 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       })
 
       setSearchId(response.search_id)
-      setSearchStatus((response.status as SearchStatus) || "queued")
+      if (response.status) {
+        const initialStatus = resolveSearchStatus({
+          search_id: response.search_id,
+          status: response.status,
+          message: response.message,
+        } as DealSearchStatusResponse)
+        setSearchStatus(initialStatus)
+        if (response.message) {
+          setStatusMessage(response.message)
+        } else if (initialStatus === "completed") {
+          setStatusMessage("Discovery completed successfully.")
+        } else if (initialStatus === "failed") {
+          setStatusMessage("Discovery failed. Please try again.")
+        }
+        if (initialStatus === "completed") {
+          setStatusProgress(100)
+        } else if (initialStatus === "failed") {
+          setStatusProgress(null)
+          setSearchError(response.message || "Discovery failed. Please try again.")
+        }
+      }
     } catch (error) {
       console.error("Failed to initiate deal search", error)
       setSearchError("Failed to start discovery. Please try again.")
+      setStatusMessage("Failed to start discovery. Please try again.")
+      setStatusProgress(null)
       setIsDiscovering(false)
       setSearchStatus("failed")
       sheetRequestRef.current = false
     }
   }
-
-  const availableCategories = Array.from(new Set(mockDeals.map((deal) => deal.category)))
-  const availableTags = Array.from(new Set(mockDeals.flatMap((deal) => deal.tags)))
 
   const handleViewDetails = (deal: Deal) => {
     setSelectedDeal(deal)
@@ -565,19 +533,120 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       case "simulation":
         return <SimulationResultsPanel {...commonProps} />
       case "deal-hunter":
-      default:
+      default: {
+        const statusLabelMap: Record<SearchStatus, string> = {
+          idle: "Ready",
+          queued: "Queued",
+          in_progress: "Running",
+          completed: "Completed",
+          failed: "Failed",
+        }
+        const badgeVariant = searchStatus === "completed" ? "default" : searchStatus === "failed" ? "destructive" : "secondary"
+        const fallbackDescription =
+          searchStatus === "failed"
+            ? searchError || "Discovery failed. Please try again."
+            : searchStatus === "completed"
+              ? "Discovery finished. Review deals below."
+              : searchStatus === "queued"
+                ? "Job queued. Waiting for backend to start."
+                : searchStatus === "in_progress"
+                  ? "Analyzing Google Drive documents…"
+                  : "Start a discovery to generate opportunities."
+        const description = statusMessage || fallbackDescription
+        const totalDeals = deals.length
+        const avgMatchScore =
+          totalDeals > 0 ? deals.reduce((sum, deal) => sum + (deal.matchScore || 0), 0) / totalDeals : 0
+        const startedAtLabel = searchStartedAt ? new Date(searchStartedAt).toLocaleTimeString() : undefined
+        const completedAtLabel = searchCompletedAt ? new Date(searchCompletedAt).toLocaleTimeString() : undefined
+
         return (
           <>
             {showDiscoveryEngine && (
               <div className="mx-10 space-y-4">
-                <DealHunterDiscoveryTimeline
-                  status={searchStatus}
-                  startedAt={searchStartedAt}
-                  completedAt={searchCompletedAt}
-                  deals={deals}
-                  isPolling={isPollingStatus}
-                  error={searchError}
-                />
+                <Card className="p-4 space-y-4">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                    <div className="space-y-1">
+                      <h4 className="font-medium">Discovery Status</h4>
+                      {startedAtLabel && (
+                        <p className="text-xs text-muted-foreground">Started {startedAtLabel}</p>
+                      )}
+                      {completedAtLabel && (
+                        <p className="text-xs text-muted-foreground">Completed {completedAtLabel}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {isPollingStatus && searchStatus !== "completed" && searchStatus !== "failed" && (
+                        <Badge variant="outline" className="text-xs">
+                          Polling backend…
+                        </Badge>
+                      )}
+                      <Badge variant={badgeVariant} className="text-xs capitalize">
+                        {statusLabelMap[searchStatus]}
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <p className="text-sm text-muted-foreground">{description}</p>
+
+                  {(searchStatus === "queued" || searchStatus === "in_progress") && (
+                    <div className="space-y-2">
+                      {statusProgress !== null ? (
+                        <div className="flex items-center gap-3">
+                          <Progress value={statusProgress} className="flex-1 h-2" />
+                          <span className="text-xs text-muted-foreground w-12 text-right">
+                            {Math.round(statusProgress)}%
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>
+                            {statusMessage ||
+                              (searchStatus === "queued"
+                                ? "Waiting for the backend to start…"
+                                : "Analyzing documents…")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {searchStatus === "failed" && (
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="flex items-center gap-2 text-sm text-destructive">
+                        <AlertCircle className="w-4 h-4" />
+                        <span>{searchError || statusMessage || "Discovery failed. Please retry."}</span>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleStartDiscovery}
+                        disabled={isDiscovering}
+                      >
+                        Retry Discovery
+                      </Button>
+                    </div>
+                  )}
+
+                  {searchStatus === "completed" && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                      <div>
+                        <div className="text-3xl font-semibold text-primary">{totalDeals}</div>
+                        <p className="text-xs text-muted-foreground">Deals Found</p>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-semibold text-primary">{avgMatchScore.toFixed(1)}</div>
+                        <p className="text-xs text-muted-foreground">Average Match Score</p>
+                      </div>
+                      <div>
+                        <div className="text-3xl font-semibold text-primary">
+                          {completedAtLabel || startedAtLabel || "--"}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Completion Time</p>
+                      </div>
+                    </div>
+                  )}
+                </Card>
 
                 <Card className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                   <div>
@@ -638,6 +707,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             )}
           </>
         )
+      }
     }
   }
 
@@ -660,58 +730,80 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             </div>
 
             <div className="space-y-4 pb-8">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-background/60 border border-border/40 rounded-lg p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    <LinkIcon className="w-4 h-4 text-primary" />
-                    Google Drive Folder
-                  </p>
-                  {hasDriveLink ? (
-                    <p className="text-xs text-muted-foreground break-all">{driveFolderLink}</p>
-                  ) : (
-                    <p className="text-xs text-destructive flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Required before running Deal Hunter
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {hasDriveLink && (
-                    <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-                      Connected
-                    </Badge>
-                  )}
-                  <Button variant="outline" size="sm" onClick={() => {
-                    setDriveLinkInput(driveFolderLink)
-                    setDriveLinkError("")
-                    setIsDriveModalOpen(true)
-                  }}>
-                    {hasDriveLink ? "Change Folder" : "Add Folder"}
+              <Card className="bg-background/60 border border-border/40 rounded-lg p-6 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium flex items-center gap-2">
+                      <LinkIcon className="w-4 h-4 text-primary" />
+                  Google Drive Folder
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Deal Hunter pulls context directly from this shared folder. Local uploads are disabled for this tool.
+                </p>
+              </div>
+              {hasDriveLink && (
+                <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                  Connected
+                </Badge>
+              )}
+            </div>
+
+            {hasDriveLink ? (
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground break-all border border-border/40 rounded-md p-3 bg-background/80">
+                  {driveFolderLink}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <a href={driveFolderLink} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-4 h-4" />
+                      Open Folder
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setDriveLinkInput(driveFolderLink)
+                      setDriveLinkError("")
+                      setIsDriveModalOpen(true)
+                    }}
+                  >
+                    Change Folder
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive/80"
+                    onClick={() => {
+                      setDriveFolderLink("")
+                      setDriveLinkInput("")
+                      setDriveLinkError("")
+                    }}
+                  >
+                    Remove
                   </Button>
                 </div>
               </div>
-
-              <FileUploadZone
-                files={files}
-                onFilesChange={handleFilesChange}
-                onProcessFiles={handleProcessFiles}
-                talentId={selectedTalent?.id}
-                uploadDisabled
-                onRequestUpload={() => {
-                  setDriveLinkInput(driveFolderLink)
-                  setDriveLinkError("")
-                  setIsDriveModalOpen(true)
-                }}
-                disabledHelperText="Connect a shared Google Drive folder instead of uploading files."
-                disabledCtaLabel="Set Google Drive Folder"
-              />
-
-              {hasDriveLink && (
-                <div className="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded text-xs text-emerald-700 dark:text-emerald-400">
-                  <p className="font-medium">✓ Drive folder connected</p>
-                  <p>Deal Hunter will analyze documents from this folder during discovery.</p>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs text-destructive">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>Connect a Google Drive folder before running Deal Hunter.</span>
                 </div>
-              )}
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setDriveLinkInput("")
+                    setDriveLinkError("")
+                    setIsDriveModalOpen(true)
+                  }}
+                >
+                  Add Folder
+                </Button>
+              </div>
+                )}
+              </Card>
             </div>
           </div>
 
