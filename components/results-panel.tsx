@@ -28,7 +28,10 @@ const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
 
 type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
 
-const resolveSearchStatus = (response: DealSearchStatusResponse): SearchStatus => {
+const resolveSearchStatus = (response: DealSearchStatusResponse | null | undefined): SearchStatus => {
+  if (!response || typeof response !== "object") {
+    return "failed"
+  }
   const rawStatus = typeof response.status === "string" ? response.status.trim().toLowerCase() : ""
   const normalized = rawStatus.replace(/\s+/g, "_")
 
@@ -278,6 +281,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
       try {
         const statusResponse = await getDealSearchStatus(searchId)
+        if (!statusResponse || typeof statusResponse !== "object") {
+          throw new Error("Invalid status response from backend")
+        }
         if (cancelled) return
 
         const normalizedStatus = resolveSearchStatus(statusResponse)
@@ -347,7 +353,8 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       } catch (error) {
         if (cancelled) return
         console.error("Failed to poll deal search status", error)
-        const fallbackMessage = "Unable to check discovery status. Please try again."
+        const fallbackMessage =
+          error instanceof Error ? error.message : "Unable to check discovery status. Please try again."
         setSearchError(fallbackMessage)
         setStatusMessage(fallbackMessage)
         setSearchStatus("failed")
@@ -430,6 +437,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         prompt,
       })
 
+      if (!response || typeof response !== "object" || typeof response.search_id !== "string") {
+        throw new Error("Backend did not return a search ID.")
+      }
+
       setSearchId(response.search_id)
       if (response.status) {
         const initialStatus = resolveSearchStatus({
@@ -454,8 +465,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       }
     } catch (error) {
       console.error("Failed to initiate deal search", error)
-      setSearchError("Failed to start discovery. Please try again.")
-      setStatusMessage("Failed to start discovery. Please try again.")
+      const message =
+        error instanceof Error ? error.message : "Failed to start discovery. Please try again."
+      setSearchError(message)
+      setStatusMessage(message)
       setStatusProgress(null)
       setIsDiscovering(false)
       setSearchStatus("failed")
