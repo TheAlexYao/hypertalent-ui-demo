@@ -7,9 +7,33 @@ export interface DealSearchPayload {
   exclude_industries?: string[] | null
 }
 
+export type DealSearchStatus =
+  | "queued"
+  | "pending"
+  | "waiting"
+  | "in_progress"
+  | "processing"
+  | "running"
+  | "started"
+  | "active"
+  | "complete"
+  | "completed"
+  | "success"
+  | "succeeded"
+  | "done"
+  | "finished"
+  | "failed"
+  | "failure"
+  | "error"
+  | "errored"
+  | "cancelled"
+  | "canceled"
+  | "aborted"
+;
+
 export interface DealSearchResponse {
   search_id: string
-  status?: "queued" | "in_progress" | "completed" | "failed"
+  status?: DealSearchStatus
   message?: string
   submitted_at?: string
 }
@@ -38,7 +62,7 @@ export interface BackendDeal {
 
 export interface DealSearchStatusResponse {
   search_id: string
-  status: "queued" | "in_progress" | "completed" | "failed"
+  status: DealSearchStatus
   progress?: number
   started_at?: string
   completed_at?: string

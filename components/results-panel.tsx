@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label"
 import { DealHunterDiscoveryTimeline } from "./deal-hunter-discovery-timeline"
 import { DEAL_STATUS_POLL_INTERVAL_MS, DEAL_STATUS_POLL_TIMEOUT_MS } from "@/lib/config"
 import { getDealSearchStatus, initiateDealSearch, createDealsSpreadsheet } from "@/services/deal-hunter-api"
-import type { BackendDeal } from "@/types/backend"
+import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
 
 const mockDeals: Deal[] = [
   {
@@ -112,6 +112,49 @@ const mockDeals: Deal[] = [
 const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
 
 type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
+
+const BACKEND_STATUS_MAP: Record<string, SearchStatus> = {
+  queued: "queued",
+  pending: "queued",
+  waiting: "queued",
+  in_progress: "in_progress",
+  processing: "in_progress",
+  running: "in_progress",
+  started: "in_progress",
+  active: "in_progress",
+  complete: "completed",
+  completed: "completed",
+  success: "completed",
+  succeeded: "completed",
+  done: "completed",
+  finished: "completed",
+  failed: "failed",
+  failure: "failed",
+  error: "failed",
+  errored: "failed",
+  cancelled: "failed",
+  canceled: "failed",
+  aborted: "failed",
+}
+
+const resolveSearchStatus = (response: DealSearchStatusResponse): SearchStatus => {
+  const rawStatus = typeof response.status === "string" ? response.status.toLowerCase() : ""
+  const mappedStatus = BACKEND_STATUS_MAP[rawStatus] ?? "in_progress"
+
+  if (mappedStatus === "completed" || mappedStatus === "failed" || mappedStatus === "queued") {
+    return mappedStatus
+  }
+
+  if (response.error) {
+    return "failed"
+  }
+
+  if (response.completed_at) {
+    return "completed"
+  }
+
+  return "in_progress"
+}
 
 interface ResultsPanelProps {
   activeTool: ToolType
@@ -308,7 +351,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         const statusResponse = await getDealSearchStatus(searchId)
         if (cancelled) return
 
-        const normalizedStatus = (statusResponse.status as SearchStatus) || "in_progress"
+        const normalizedStatus = resolveSearchStatus(statusResponse)
         setSearchStatus(normalizedStatus)
         if (statusResponse.started_at) {
           setSearchStartedAt(statusResponse.started_at)
