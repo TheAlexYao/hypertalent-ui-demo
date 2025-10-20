@@ -27,7 +27,7 @@ import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
 
 const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
 const DEAL_RESULTS_LIMIT = 1000
-const DEAL_DISPLAY_LIMIT = 200
+const DEAL_DISPLAY_LIMIT = 20
 
 type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
 
