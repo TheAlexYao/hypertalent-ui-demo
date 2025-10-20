@@ -25,10 +25,10 @@ const buildQueryString = (params: Record<string, unknown>): string => {
 export const getAuthStatus = () => apiGet<AuthStatusResponse>("/auth/status")
 
 export const initiateDealSearch = (payload: DealSearchPayload) =>
-  apiPost<DealSearchResponse>("/api/deals/search", payload)
+  apiPost<DealSearchResponse>("/api/deals/search", payload, { timeoutMs: 120_000 })
 
 export const initiateDealSearchSync = (payload: DealSearchPayload) =>
-  apiPost<DealSearchStatusResponse>("/api/deals/search/sync", payload)
+  apiPost<DealSearchStatusResponse>("/api/deals/search/sync", payload, { timeoutMs: 180_000 })
 
 export const getDealSearchStatus = (searchId: string) =>
   apiGet<DealSearchStatusResponse>(`/api/deals/status/${encodeURIComponent(searchId)}`)
