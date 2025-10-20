@@ -27,6 +27,7 @@ import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
 
 const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
 const DEAL_RESULTS_LIMIT = 1000
+const DEAL_DISPLAY_LIMIT = 200
 
 type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
 
@@ -110,6 +111,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const [files, setFiles] = useState<UploadedFile[]>(sharedFiles)
   const [deals, setDeals] = useState<Deal[]>([])
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>([])
+  const [isDealListTruncated, setIsDealListTruncated] = useState(false)
   const [isDiscovering, setIsDiscovering] = useState(false)
   const [showDiscoveryEngine, setShowDiscoveryEngine] = useState(false)
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null)
@@ -309,8 +311,10 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           const mappedDeals = (statusResponse.deals || [])
             .slice(0, DEAL_RESULTS_LIMIT)
             .map((deal, index) => mapBackendDealToDeal(deal, index))
-          setDeals(mappedDeals)
-          setFilteredDeals(mappedDeals)
+          const limitedDeals = mappedDeals.slice(0, DEAL_DISPLAY_LIMIT)
+          setDeals(limitedDeals)
+          setFilteredDeals(limitedDeals)
+          setIsDealListTruncated(mappedDeals.length > DEAL_DISPLAY_LIMIT)
           setIsDiscovering(false)
           setStatusMessage(statusResponse.message || "Discovery completed successfully.")
           setStatusProgress(100)
@@ -416,6 +420,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       setSearchError("")
       setDeals([])
       setFilteredDeals([])
+      setIsDealListTruncated(false)
       setShowDiscoveryEngine(true)
       setIsDiscovering(true)
       setSearchStatus("queued")
@@ -728,6 +733,11 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                   setShowExportModal(true)
                 }}
               />
+            )}
+            {isDealListTruncated && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Showing the first {DEAL_DISPLAY_LIMIT} opportunities. Download the spreadsheet for the complete set.
+              </p>
             )}
           </>
         )
