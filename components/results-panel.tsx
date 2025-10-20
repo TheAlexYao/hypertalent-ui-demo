@@ -1,5 +1,5 @@
 "use client"
-import { FileText, CheckCircle, Link as LinkIcon, AlertCircle, FileSpreadsheet, ExternalLink, Loader2 } from "lucide-react"
+import { FileText, CheckCircle, Link as LinkIcon, AlertCircle, FileSpreadsheet, ExternalLink, Loader2, Zap } from "lucide-react"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { FileUploadZone, type UploadedFile } from "./file-upload-zone"
 import { TalentSelector, type TalentProfile } from "./talent-selector"
@@ -20,6 +20,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
+import { Textarea } from "@/components/ui/textarea"
 import { DEAL_STATUS_POLL_INTERVAL_MS, DEAL_STATUS_POLL_TIMEOUT_MS } from "@/lib/config"
 import { getDealSearchStatus, initiateDealSearch, createDealsSpreadsheet } from "@/services/deal-hunter-api"
 import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
@@ -118,6 +119,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   const [driveFolderLink, setDriveFolderLink] = useState<string>("")
   const [driveLinkInput, setDriveLinkInput] = useState("")
   const [driveLinkError, setDriveLinkError] = useState("")
+  const [dealHunterPrompt, setDealHunterPrompt] = useState("")
   const [searchId, setSearchId] = useState<string | null>(null)
   const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle")
   const [searchStartedAt, setSearchStartedAt] = useState<string | undefined>()
@@ -388,7 +390,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   }
 
   const handleStartDiscovery = async () => {
-    if (!selectedTalent) {
+    if (activeTool !== "deal-hunter" && !selectedTalent) {
       alert("Please select a talent profile first")
       return
     }
@@ -423,12 +425,18 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
       sheetRequestRef.current = false
       setSearchId(null)
 
+      const trimmedPrompt = dealHunterPrompt.trim()
       const promptParts: string[] = [
-        `Analyze Google Drive folder contents for ${selectedTalent.name}.`,
-        "Identify brand partnership and sponsorship opportunities.",
+        "Analyze the connected Google Drive folder contents to identify brand partnership and sponsorship opportunities.",
       ]
-      if (selectedTalent.category) {
+      if (selectedTalent?.name) {
+        promptParts.push(`Use available context about ${selectedTalent.name} when relevant.`)
+      }
+      if (selectedTalent?.category) {
         promptParts.push(`Talent category: ${selectedTalent.category}.`)
+      }
+      if (trimmedPrompt.length > 0) {
+        promptParts.push(`Focus the search on opportunities related to: ${trimmedPrompt}.`)
       }
       const prompt = promptParts.join(" ")
 
@@ -731,93 +739,112 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     if (activeTool === "deal-hunter") {
       return (
         <>
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-8 border-none py-0">
-            <div className="mb-6">
-              <TalentSelector
-                selectedTalent={selectedTalent}
-                onTalentChange={setSelectedTalent}
-                onCreateNew={() => console.log("Create new talent")}
-                onStartDiscovery={handleStartDiscovery}
-                isDiscovering={isDiscovering}
-              />
-            </div>
-
-            <div className="space-y-4 pb-8">
-              <Card className="bg-background/60 border border-border/40 rounded-lg p-6 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-medium flex items-center gap-2">
-                      <LinkIcon className="w-4 h-4 text-primary" />
-                  Google Drive Folder
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Deal Hunter pulls context directly from this shared folder. Local uploads are disabled for this tool.
-                </p>
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-8 space-y-6">
+            <Card className="bg-background/60 border border-border/40 rounded-lg p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium flex items-center gap-2">
+                    <LinkIcon className="w-4 h-4 text-primary" />
+                    Google Drive Folder
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Deal Hunter pulls context directly from this shared folder. Local uploads are disabled for this tool.
+                  </p>
+                </div>
+                {hasDriveLink && (
+                  <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                    Connected
+                  </Badge>
+                )}
               </div>
-              {hasDriveLink && (
-                <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-                  Connected
-                </Badge>
-              )}
-            </div>
 
-            {hasDriveLink ? (
-              <div className="space-y-3">
-                <p className="text-xs text-muted-foreground break-all border border-border/40 rounded-md p-3 bg-background/80">
-                  {driveFolderLink}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <a href={driveFolderLink} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-4 h-4" />
-                      Open Folder
-                    </a>
-                  </Button>
+              {hasDriveLink ? (
+                <div className="space-y-4">
+                  <div className="space-y-3">
+                    <p className="text-xs text-muted-foreground break-all border border-border/40 rounded-md p-3 bg-background/80">
+                      {driveFolderLink}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button asChild variant="outline" size="sm">
+                        <a href={driveFolderLink} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                          Open Folder
+                        </a>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setDriveLinkInput(driveFolderLink)
+                          setDriveLinkError("")
+                          setIsDriveModalOpen(true)
+                        }}
+                      >
+                        Change Folder
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive/80"
+                        onClick={() => {
+                          setDriveFolderLink("")
+                          setDriveLinkInput("")
+                          setDriveLinkError("")
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="deal-hunter-prompt"
+                      className="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+                    >
+                      Discovery Prompt
+                    </Label>
+                    <Textarea
+                      id="deal-hunter-prompt"
+                      placeholder='e.g. "Find me sports drinks brands"'
+                      value={dealHunterPrompt}
+                      onChange={(event) => setDealHunterPrompt(event.target.value)}
+                      className="min-h-[96px] resize-y"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Guide Deal Hunter toward specific categories, product types, or partnership goals.
+                    </p>
+                  </div>
+
                   <Button
-                    variant="outline"
+                    onClick={handleStartDiscovery}
+                    disabled={isDiscovering}
+                    className="w-full gap-2 bg-[#AE94FB] hover:bg-[#9B7EF7] text-black font-medium"
+                    size="sm"
+                  >
+                    <Zap className="w-4 h-4" />
+                    {isDiscovering ? "Discovering..." : "Start Discovery"}
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-xs text-destructive">
+                    <AlertCircle className="w-3 h-3" />
+                    <span>Connect a Google Drive folder before running Deal Hunter.</span>
+                  </div>
+                  <Button
                     size="sm"
                     onClick={() => {
-                      setDriveLinkInput(driveFolderLink)
+                      setDriveLinkInput("")
                       setDriveLinkError("")
                       setIsDriveModalOpen(true)
                     }}
                   >
-                    Change Folder
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive hover:text-destructive/80"
-                    onClick={() => {
-                      setDriveFolderLink("")
-                      setDriveLinkInput("")
-                      setDriveLinkError("")
-                    }}
-                  >
-                    Remove
+                    Add Folder
                   </Button>
                 </div>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-xs text-destructive">
-                  <AlertCircle className="w-3 h-3" />
-                  <span>Connect a Google Drive folder before running Deal Hunter.</span>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setDriveLinkInput("")
-                    setDriveLinkError("")
-                    setIsDriveModalOpen(true)
-                  }}
-                >
-                  Add Folder
-                </Button>
-              </div>
-                )}
-              </Card>
-            </div>
+              )}
+            </Card>
           </div>
 
           {/* Tool-Specific Results Section */}
