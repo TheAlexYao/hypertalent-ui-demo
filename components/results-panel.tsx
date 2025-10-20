@@ -26,6 +26,7 @@ import { getDealSearchStatus, initiateDealSearch, createDealsSpreadsheet } from 
 import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
 
 const DRIVE_LINK_STORAGE_KEY = "hyper-talent-drive-folder"
+const DEAL_RESULTS_LIMIT = 1000
 
 type SearchStatus = "idle" | "queued" | "in_progress" | "completed" | "failed"
 
@@ -242,7 +243,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
     setSpreadsheetError("")
 
     try {
-      const response = await createDealsSpreadsheet(folderId)
+      const response = await createDealsSpreadsheet(folderId, { limit: DEAL_RESULTS_LIMIT })
       let url: string | undefined
       if (typeof response === "string") {
         url = response
@@ -305,7 +306,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
         }
 
         if (normalizedStatus === "completed") {
-          const mappedDeals = (statusResponse.deals || []).map((deal, index) => mapBackendDealToDeal(deal, index))
+          const mappedDeals = (statusResponse.deals || [])
+            .slice(0, DEAL_RESULTS_LIMIT)
+            .map((deal, index) => mapBackendDealToDeal(deal, index))
           setDeals(mappedDeals)
           setFilteredDeals(mappedDeals)
           setIsDiscovering(false)
