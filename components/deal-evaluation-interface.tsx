@@ -10,12 +10,8 @@ import { Progress } from "@/components/ui/progress"
 import {
   Grid,
   List,
-  DollarSign,
-  TrendingUp,
   Target,
   BarChart3,
-  Eye,
-  Mail,
   Download,
   SortAsc,
   SortDesc,
@@ -24,6 +20,7 @@ import {
 import { useState, useMemo } from "react"
 import type { Deal } from "@/types/deal"
 import type { TalentProfile } from "./talent-profile-manager"
+import { DealCard } from "./deal-card"
 
 interface DealEvaluationInterfaceProps {
   deals: Deal[]
@@ -274,7 +271,7 @@ export function DealEvaluationInterface({
 
         <TabsContent value="deals" className="space-y-4 mx-16">
           {/* Quick Filters */}
-          <Card className="p-4">
+          <Card className="rounded-2xl border border-border/40 bg-background/60 p-5">
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex-1 min-w-64">
                 <div className="relative">
@@ -338,74 +335,12 @@ export function DealEvaluationInterface({
           {/* Deals Grid/List */}
           <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" : "space-y-3"}>
             {filteredDeals.map((deal) => (
-              <Card key={deal.id} className="p-4 hover:shadow-md transition-shadow">
-                <div className="space-y-3">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm">{deal.brand}</h4>
-                      <p className="text-xs text-muted-foreground">{deal.title}</p>
-                    </div>
-                  </div>
-
-                  {/* Metrics */}
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="w-3 h-3 text-foreground flex-col" />
-                      <span style={{ color: "#AE94FB" }} className="font-semibold text-sm">
-                        {deal.valueRange}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3 text-blue-500" />
-                      <span style={{ color: "#AE94FB" }} className="font-semibold text-sm">
-                        {deal.engagement}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs text-muted-foreground line-clamp-2">{deal.description}</p>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-1">
-                    {deal.tags.slice(0, 3).map((tag) => (
-                      <Badge key={tag} variant="outline" className="text-xs border-white">
-                        {tag}
-                      </Badge>
-                    ))}
-                    {deal.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs border-white">
-                        +{deal.tags.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex gap-1 sm:gap-2 mt-auto">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onViewDetails(deal)}
-                      className="flex-1 gap-1 text-xs lg:text-sm border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
-                    >
-                      <Eye className="w-3 h-3" />
-                      <span className="hidden sm:inline">Details</span>
-                      <span className="sm:hidden">View</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onGenerateOutreach(deal)}
-                      className="flex-1 gap-1 text-xs lg:text-sm border-gray-400 text-white hover:bg-[#AE94FB] hover:text-black hover:border-[#AE94FB]"
-                    >
-                      <Mail className="w-3 h-3" />
-                      <span className="hidden sm:inline">Outreach</span>
-                      <span className="sm:hidden">Send</span>
-                    </Button>
-                  </div>
-                </div>
-              </Card>
+              <DealCard
+                key={deal.id}
+                deal={deal}
+                onViewDetails={onViewDetails}
+                onGenerateOutreach={onGenerateOutreach}
+              />
             ))}
           </div>
 

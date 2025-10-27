@@ -237,7 +237,7 @@ export function GameplanResultsPanel({
       {/* Campaign Goals Input */}
       <div>
         <h4 className="text-sm font-medium mb-3">Partnership Configuration</h4>
-        <Card className="p-4">
+        <Card className="p-5 rounded-2xl border border-border/40 bg-background/60 space-y-4">
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium mb-2 block">Campaign Budget</label>
@@ -325,14 +325,16 @@ export function GameplanResultsPanel({
             </div>
 
             {mockMarketplaceListings.map((listing) => (
-              <Card key={listing.id} className="p-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {listing.isAnonymous ? (
-                        <div className="flex items-center gap-2">
-                          <EyeOff className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-medium">{listing.brandCode}</span>
+              <Card
+                key={listing.id}
+                className="p-5 rounded-2xl border border-border/40 bg-background/60 flex flex-col gap-4"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    {listing.isAnonymous ? (
+                      <div className="flex items-center gap-2">
+                        <EyeOff className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">{listing.brandCode}</span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -350,47 +352,46 @@ export function GameplanResultsPanel({
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Industry:</span>
-                      <span>{listing.industry}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Market Cap:</span>
-                      <span>{listing.marketCap}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Package Type:</span>
-                      <span>{listing.packageType}</span>
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs uppercase text-muted-foreground tracking-wide">Industry</span>
+                    <span className="text-foreground">{listing.industry}</span>
                   </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs uppercase text-muted-foreground tracking-wide">Market Cap</span>
+                    <span className="text-foreground">{listing.marketCap}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs uppercase text-muted-foreground tracking-wide">Package</span>
+                    <span className="text-foreground">{listing.packageType}</span>
+                  </div>
+                </div>
 
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Requirements:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {listing.requirements.map((req, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {req}
-                        </Badge>
-                      ))}
-                    </div>
+                <div>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2">Requirements</p>
+                  <div className="flex flex-wrap gap-2">
+                    {listing.requirements.map((req, index) => (
+                      <Badge key={index} variant="outline" className="text-xs border-border/40">
+                        {req}
+                      </Badge>
+                    ))}
                   </div>
+                </div>
 
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Posted: {new Date(listing.postedDate).toLocaleDateString()}</span>
-                    <span>{listing.applications} applications</span>
-                  </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>Posted: {new Date(listing.postedDate).toLocaleDateString()}</span>
+                  <span>{listing.applications} applications</span>
+                </div>
 
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 bg-transparent gap-2">
-                      <Handshake className="w-3 h-3" />
-                      Apply Anonymously
-                    </Button>
-                    <Button size="sm" className="flex-1 gap-2">
-                      <Zap className="w-3 h-3" />
-                      Request Details
-                    </Button>
-                  </div>
+                <div className="mt-auto flex gap-2">
+                  <Button variant="outline" size="sm" className="flex-1 gap-2 border-border/60 bg-transparent hover:bg-border/20">
+                    <Handshake className="w-3 h-3" />
+                    Apply Anonymously
+                  </Button>
+                  <Button size="sm" className="flex-1 gap-2 bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90">
+                    <Zap className="w-3 h-3" />
+                    Request Details
+                  </Button>
                 </div>
               </Card>
             ))}
@@ -401,46 +402,47 @@ export function GameplanResultsPanel({
           <div className="space-y-3">
             <Badge variant="outline">{mockPackages.length} matches found</Badge>
             {mockPackages.map((pkg) => (
-              <Card key={pkg.id} className="p-4">
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Building className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium">{pkg.venue}</span>
-                      <Badge variant="secondary" className="text-xs">
-                        {pkg.packageType}
-                      </Badge>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{pkg.price}</p>
-                      <p className="text-xs text-muted-foreground">{pkg.duration}</p>
-                    </div>
+              <Card
+                key={pkg.id}
+                className="p-5 rounded-2xl border border-border/40 bg-background/60 flex flex-col gap-4"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Building className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">{pkg.venue}</span>
+                    <Badge variant="secondary" className="text-xs">
+                      {pkg.packageType}
+                    </Badge>
                   </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{pkg.price}</p>
+                    <p className="text-xs text-muted-foreground">{pkg.duration}</p>
+                  </div>
+                </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className={`w-4 h-4 ${getROIColor(pkg.estimatedROI)}`} />
-                      <span>ROI: {pkg.estimatedROI}x</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      <span>Reach: {pkg.audienceReach}</span>
-                    </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className={`w-4 h-4 ${getROIColor(pkg.estimatedROI)}`} />
+                    <span>ROI: {pkg.estimatedROI}x</span>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-muted-foreground" />
+                    <span>Reach: {pkg.audienceReach}</span>
+                  </div>
+                </div>
 
-                  <div className="text-xs text-muted-foreground">
-                    <p>Demographics: {pkg.demographics}</p>
-                    <p>Confidence: {Math.round(pkg.confidence * 100)}%</p>
-                  </div>
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>Demographics: {pkg.demographics}</p>
+                  <p>Confidence: {Math.round(pkg.confidence * 100)}%</p>
+                </div>
 
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                      View Details
-                    </Button>
-                    <Button size="sm" className="flex-1">
-                      Generate Proposal
-                    </Button>
-                  </div>
+                <div className="mt-auto flex gap-2">
+                  <Button variant="outline" size="sm" className="flex-1 border-border/60 bg-transparent hover:bg-border/20">
+                    View Details
+                  </Button>
+                  <Button size="sm" className="flex-1 bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90">
+                    Generate Proposal
+                  </Button>
                 </div>
               </Card>
             ))}
@@ -454,7 +456,7 @@ export function GameplanResultsPanel({
             </p>
 
             {mockVenueInventory.map((venue) => (
-              <Card key={venue.id} className="p-4">
+              <Card key={venue.id} className="p-5 rounded-2xl border border-border/40 bg-background/60 space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -589,7 +591,7 @@ export function GameplanResultsPanel({
               ))}
             </div>
 
-            <Card className="p-4">
+            <Card className="p-5 rounded-2xl border border-border/40 bg-background/60 space-y-4">
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-green-500" />

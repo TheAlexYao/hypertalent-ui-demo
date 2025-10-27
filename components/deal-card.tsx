@@ -27,32 +27,32 @@ interface DealCardProps {
 
 export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId }: DealCardProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 9) return "text-green-500"
-    if (score >= 7) return "text-yellow-500"
-    return "text-orange-500"
+    if (score >= 9) return "text-[var(--status-crawler-positive-foreground)]"
+    if (score >= 7) return "text-[var(--status-medium)]"
+    return "text-[var(--status-crawler-negative-foreground)]"
   }
 
   const getValueColor = (value: string) => {
     const numValue = Number.parseInt(value.replace(/[^0-9]/g, ""))
-    if (numValue >= 100000) return "text-green-500"
-    if (numValue >= 50000) return "text-blue-500"
-    return "text-gray-500"
+    if (numValue >= 100000) return "text-[var(--status-crawler-positive-foreground)]"
+    if (numValue >= 50000) return "text-[var(--status-medium)]"
+    return "text-muted-foreground"
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "new":
-        return "text-blue-500"
+        return "text-blue-400"
       case "contacted":
-        return "text-yellow-500"
+        return "text-[var(--status-medium)]"
       case "negotiating":
-        return "text-orange-500"
+        return "text-[var(--status-medium)]"
       case "closed":
-        return "text-green-500"
+        return "text-[var(--status-crawler-positive-foreground)]"
       case "rejected":
-        return "text-red-500"
+        return "text-[var(--status-crawler-negative-foreground)]"
       default:
-        return "text-gray-500"
+        return "text-muted-foreground"
     }
   }
 
@@ -74,60 +74,60 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
   }
 
   return (
-    <Card className="p-4 hover:shadow-md transition-shadow">
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
+    <Card className="flex h-full flex-col gap-4 rounded-2xl border border-border/40 bg-background/60 p-5 shadow-sm transition-transform hover:-translate-y-0.5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
             <Building className="w-4 h-4 text-muted-foreground" />
-            <h5 className="font-semibold text-sm">{deal.brand}</h5>
+            <h5 className="text-sm font-semibold text-foreground">{deal.brand}</h5>
             {linkedStepId && (
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs uppercase tracking-wide border-border/50">
                 Linked
               </Badge>
             )}
-            <Badge variant="outline" className={`text-xs gap-1 ${getStatusColor(deal.status || "new")}`}>
-              {getStatusIcon(deal.status || "new")}
-              {(deal.status || "new").charAt(0).toUpperCase() + (deal.status || "new").slice(1)}
-            </Badge>
           </div>
-          <h6 className="text-sm text-muted-foreground mb-1">{deal.title}</h6>
-          <p className="text-xs text-muted-foreground">{deal.category}</p>
+          <div>
+            <p className="text-base font-medium text-foreground">{deal.title}</p>
+            <p className="text-xs text-muted-foreground">{deal.category}</p>
+          </div>
+          <Badge
+            variant="outline"
+            className={`inline-flex w-fit items-center gap-1 rounded-full border-transparent bg-secondary/40 px-3 py-1 text-xs font-medium capitalize ${getStatusColor(deal.status || "new")}`}
+          >
+            {getStatusIcon(deal.status || "new")}
+            {(deal.status || "new").charAt(0).toUpperCase() + (deal.status || "new").slice(1)}
+          </Badge>
         </div>
-
-        <div className="flex items-center gap-2">
-          <div className="text-right">
-            <div className="flex items-center gap-1">
-              <Star className={`w-4 h-4 fill-current ${getScoreColor(deal.matchScore)}`} />
-              <span className={`text-sm font-medium ${getScoreColor(deal.matchScore)}`}>{deal.matchScore}</span>
-            </div>
-            <p className="text-xs text-muted-foreground">Match</p>
+        <div className="text-right">
+          <div className={`flex items-center justify-end gap-1 ${getScoreColor(deal.matchScore)}`}>
+            <Star className="w-5 h-5 fill-current" />
+            <span className="text-2xl font-semibold">{deal.matchScore}</span>
           </div>
+          <p className="text-xs text-muted-foreground uppercase tracking-wide">Match Score</p>
         </div>
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{deal.description}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{deal.description}</p>
 
       {deal.crmData && (
-        <div className="mb-3 p-2 bg-secondary/30 rounded-lg">
-          <div className="flex items-center justify-between text-xs">
+        <div className="rounded-xl border border-border/40 bg-secondary/30 p-3 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Users className="w-3 h-3 text-blue-500" />
-              <span className="text-muted-foreground">CRM:</span>
-              <span className="font-medium">{deal.crmData.accountManager}</span>
+              <Users className="w-3 h-3 text-blue-400" />
+              <span className="text-muted-foreground">Account Manager</span>
+              <span className="font-medium text-foreground">{deal.crmData.accountManager}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <span className="text-muted-foreground">Last Contact:</span>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <span>Last Contact:</span>
               <span>
                 {deal.crmData.lastContact ? new Date(deal.crmData.lastContact).toLocaleDateString() : "Never"}
               </span>
             </div>
           </div>
           {deal.crmData.nextFollowUp && (
-            <div className="flex items-center justify-between text-xs mt-1">
-              <span className="text-muted-foreground">Next Follow-up:</span>
-              <span className="font-medium text-orange-500">
+            <div className="mt-2 flex items-center gap-2 text-muted-foreground">
+              <span>Next Follow-up:</span>
+              <span className="font-medium text-[var(--status-medium)]">
                 {new Date(deal.crmData.nextFollowUp).toLocaleDateString()}
               </span>
             </div>
@@ -135,45 +135,41 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
         </div>
       )}
 
-      {/* Metadata */}
-      <div className="space-y-2 mb-3">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Value Range:</span>
-          <span className={`font-medium ${getValueColor(deal.valueRange)}`}>{deal.valueRange}</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        <div className="space-y-1">
+          <p className="text-xs uppercase text-muted-foreground tracking-wide">Value Range</p>
+          <span className={`text-lg font-semibold ${getValueColor(deal.valueRange)}`}>{deal.valueRange}</span>
         </div>
-
-        {deal.pipelineData && (
-          <div className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Close Probability:</span>
-              <span className="font-medium">{deal.pipelineData.probability}%</span>
-            </div>
-            <Progress value={deal.pipelineData.probability} className="h-1" />
-          </div>
-        )}
-
         {deal.deadline && (
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Deadline:</span>
-            <div className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
+          <div className="space-y-1">
+            <p className="text-xs uppercase text-muted-foreground tracking-wide">Deadline</p>
+            <div className="flex items-center gap-2 text-foreground">
+              <Calendar className="w-4 h-4" />
               <span>{new Date(deal.deadline).toLocaleDateString()}</span>
             </div>
           </div>
         )}
-
+        {deal.pipelineData && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs uppercase text-muted-foreground tracking-wide">
+              <span>Close Probability</span>
+              <span className="text-foreground">{deal.pipelineData.probability}%</span>
+            </div>
+            <Progress value={deal.pipelineData.probability} className="h-2 rounded-full" />
+          </div>
+        )}
         {deal.requirements && deal.requirements.length > 0 && (
-          <div className="text-xs">
-            <span className="text-muted-foreground">Requirements:</span>
-            <div className="flex flex-wrap gap-1 mt-1">
-              {deal.requirements.slice(0, 2).map((req, idx) => (
-                <Badge key={idx} variant="secondary" className="text-xs">
+          <div className="space-y-2">
+            <p className="text-xs uppercase text-muted-foreground tracking-wide">Key Requirements</p>
+            <div className="flex flex-wrap gap-2">
+              {deal.requirements.slice(0, 3).map((req, idx) => (
+                <Badge key={idx} variant="secondary" className="text-xs bg-secondary/40 border-border/40">
                   {req}
                 </Badge>
               ))}
-              {deal.requirements.length > 2 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{deal.requirements.length - 2} more
+              {deal.requirements.length > 3 && (
+                <Badge variant="secondary" className="text-xs bg-secondary/40 border-border/40">
+                  +{deal.requirements.length - 3} more
                 </Badge>
               )}
             </div>
@@ -181,58 +177,71 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
         )}
       </div>
 
-      {/* Tags */}
-      <div className="flex flex-wrap gap-1 mb-3">
+      <div className="flex flex-wrap gap-2">
         {deal.tags.map((tag) => (
-          <Badge key={tag} variant="outline" className="text-xs">
+          <Badge key={tag} variant="outline" className="text-xs rounded-full border-border/40 text-muted-foreground">
             {tag}
           </Badge>
         ))}
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-2">
-        <Button variant="outline" size="sm" onClick={() => onViewDetails(deal)} className="flex-1 gap-1">
-          <Eye className="w-3 h-3" />
-          Details
-        </Button>
-        <Button variant="default" size="sm" onClick={() => onGenerateOutreach(deal)} className="flex-1 gap-1">
-          <Mail className="w-3 h-3" />
-          Outreach
-        </Button>
+      <div className="mt-auto space-y-3">
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onViewDetails(deal)}
+            className="flex-1 gap-2 border-border/60 bg-transparent hover:bg-border/20"
+          >
+            <Eye className="w-4 h-4" />
+            View Details
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => onGenerateOutreach(deal)}
+            className="flex-1 gap-2 bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90"
+          >
+            <Mail className="w-4 h-4" />
+            Generate Outreach
+          </Button>
+        </div>
+
+        {deal.engagement && (
+          <div className="rounded-xl border border-border/40 bg-secondary/30 p-3 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground uppercase tracking-wide">Expected Engagement</span>
+              <div className="flex items-center gap-2 text-[var(--status-crawler-positive-foreground)]">
+                <TrendingUp className="w-4 h-4" />
+                <span className="text-sm font-semibold">{deal.engagement}%</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {deal.emailTracking && (
+          <div className="rounded-xl border border-border/40 bg-secondary/30 p-3 text-xs">
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="space-y-1">
+                <p className="text-muted-foreground uppercase tracking-wide">Sent</p>
+                <span className="text-sm font-semibold text-foreground">{deal.emailTracking.sent}</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground uppercase tracking-wide">Opened</p>
+                <span className="text-sm font-semibold text-[var(--status-crawler-positive-foreground)]">
+                  {deal.emailTracking.opened}
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground uppercase tracking-wide">Replied</p>
+                <span className="text-sm font-semibold text-[var(--status-medium)]">
+                  {deal.emailTracking.replied}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Performance Indicators */}
-      {deal.engagement && (
-        <div className="mt-2 pt-2 border-t border-border">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">Expected Engagement:</span>
-            <div className="flex items-center gap-1">
-              <TrendingUp className="w-3 h-3 text-green-500" />
-              <span className="text-green-500 font-medium">{deal.engagement}%</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {deal.emailTracking && (
-        <div className="mt-2 pt-2 border-t border-border">
-          <div className="grid grid-cols-3 gap-2 text-xs">
-            <div className="text-center">
-              <div className="font-medium text-blue-500">{deal.emailTracking.sent}</div>
-              <div className="text-muted-foreground">Sent</div>
-            </div>
-            <div className="text-center">
-              <div className="font-medium text-green-500">{deal.emailTracking.opened}</div>
-              <div className="text-muted-foreground">Opened</div>
-            </div>
-            <div className="text-center">
-              <div className="font-medium text-purple-500">{deal.emailTracking.replied}</div>
-              <div className="text-muted-foreground">Replied</div>
-            </div>
-          </div>
-        </div>
-      )}
     </Card>
   )
 }

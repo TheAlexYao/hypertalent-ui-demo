@@ -14,28 +14,31 @@ export type ToolType = "chat" | "crawler" | "deal-hunter" | "gameplan" | "simula
 
 export default function DealHunterPage() {
   const [activeTool, setActiveTool] = useState<ToolType>("deal-hunter")
-  const [rightPanelWidth, setRightPanelWidth] = useState(720) // Maximum width for expanded layout
+  const [rightPanelWidth, setRightPanelWidth] = useState(352) // Default width for chat-focused layout
   const [isResizing, setIsResizing] = useState(false)
   const [sharedFiles, setSharedFiles] = useState<UploadedFile[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
+  const chatHasTerminal = activeTool === "chat"
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
-    setIsResizing(true)
-  }, [])
+    if (chatHasTerminal) {
+      setIsResizing(true)
+    }
+  }, [chatHasTerminal])
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      if (!isResizing || !containerRef.current) return
+      if (!isResizing || !containerRef.current || !chatHasTerminal) return
 
       const containerRect = containerRef.current.getBoundingClientRect()
       const newWidth = containerRect.right - e.clientX
 
-      // Constrain width between 320px and 720px
-      const constrainedWidth = Math.max(320, Math.min(720, newWidth))
+      // Constrain width between 320px and 480px for the chat results column
+      const constrainedWidth = Math.max(320, Math.min(480, newWidth))
       setRightPanelWidth(constrainedWidth)
     },
-    [isResizing],
+    [isResizing, chatHasTerminal],
   )
 
   const handleMouseUp = useCallback(() => {
@@ -43,7 +46,7 @@ export default function DealHunterPage() {
   }, [])
 
   React.useEffect(() => {
-    if (isResizing) {
+    if (isResizing && chatHasTerminal) {
       document.addEventListener("mousemove", handleMouseMove)
       document.addEventListener("mouseup", handleMouseUp)
       document.body.style.cursor = "col-resize"
@@ -61,7 +64,7 @@ export default function DealHunterPage() {
       document.body.style.cursor = ""
       document.body.style.userSelect = ""
     }
-  }, [isResizing, handleMouseMove, handleMouseUp])
+  }, [isResizing, handleMouseMove, handleMouseUp, chatHasTerminal])
 
   return (
     <ProtectedRoute>
@@ -76,7 +79,7 @@ export default function DealHunterPage() {
 
           {/* Three Column Layout with refined spacing */}
           <div className="flex-1 flex min-h-0" ref={containerRef}>
-            {activeTool !== "deal-hunter" && (
+            {chatHasTerminal && (
               <>
                 {/* Center - Hyper Computer Terminal */}
                 <div className="flex-1 min-w-[400px] border-r border-border/50">
@@ -96,8 +99,12 @@ export default function DealHunterPage() {
 
             {/* Right - Results Panel (Resizable for other tools, full width for deal-hunter) */}
             <div
-              className={activeTool === "deal-hunter" ? "flex-1" : "min-w-80 max-w-[720px] border-l border-border/20"}
-              style={activeTool === "deal-hunter" ? {} : { width: rightPanelWidth }}
+              className={
+                chatHasTerminal
+                  ? "min-w-[320px] max-w-[480px] border-l border-border/20"
+                  : "flex-1"
+              }
+              style={chatHasTerminal ? { width: rightPanelWidth } : {}}
             >
               <ResultsPanel activeTool={activeTool} sharedFiles={sharedFiles} onSharedFilesChange={setSharedFiles} />
             </div>
