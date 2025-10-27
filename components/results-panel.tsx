@@ -7,7 +7,7 @@ import { DealDetailsModal } from "./deal-details-modal"
 import { OutreachModal } from "./outreach-modal"
 import { ExportModal } from "./export-modal"
 import { DealEvaluationInterface } from "./deal-evaluation-interface"
-import { ChatResultsPanel } from "./tools/chat-results-panel"
+import { ChatSidebar } from "./chat-sidebar"
 import { CrawlerResultsPanel } from "./tools/crawler-results-panel"
 import { GameplanResultsPanel } from "./tools/gameplan-results-panel"
 import { SimulationResultsPanel } from "./tools/simulation-results-panel"
@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { Textarea } from "@/components/ui/textarea"
 import { DEAL_STATUS_POLL_INTERVAL_MS, DEAL_STATUS_POLL_TIMEOUT_MS } from "@/lib/config"
+import { cn } from "@/lib/utils"
 import { getDealSearchStatus, initiateDealSearch, createDealsSpreadsheet } from "@/services/deal-hunter-api"
 import type { BackendDeal, DealSearchStatusResponse } from "@/types/backend"
 
@@ -582,7 +583,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
     switch (activeTool) {
       case "chat":
-        return <ChatResultsPanel {...commonProps} />
+        return null
       case "crawler":
         return <CrawlerResultsPanel {...commonProps} />
       case "gameplan":
@@ -908,10 +909,14 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
 
     if (activeTool === "chat") {
       return (
-        <div className="space-y-4">
-          {header}
-          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
-        </div>
+        <ChatSidebar
+          title={title}
+          subtitle={subtitle}
+          selectedTalent={selectedTalent}
+          onTalentChange={setSelectedTalent}
+          files={files}
+          onFilesChange={handleFilesChange}
+        />
       )
     }
 
@@ -959,14 +964,14 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   }
 
   return (
-    <div className="flex flex-col h-full items-stretch">
-      {/* Header */}
-      <div className="p-4 border-border bg-background border-none border-b-[0]">
-        
-      </div>
-
-      <div className="flex-1 overflow-y-auto py-[16] space-y-4 text-foreground bg-background border-none rounded-none shadow-none mx-8 px-6">
-        {renderToolSpecificPanel()}
+    <div className="flex h-full flex-col">
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto bg-background text-foreground",
+          activeTool === "chat" ? "px-4 py-4" : "mx-8 px-6 py-6",
+        )}
+      >
+        <div className={cn("h-full", activeTool === "chat" ? "" : "space-y-4")}>{renderToolSpecificPanel()}</div>
       </div>
 
       {/* Modals */}
