@@ -18,7 +18,7 @@ import {
   Target,
 } from "lucide-react"
 import { useState } from "react"
-import { TalentSelector, type TalentProfile } from "../talent-selector"
+import type { TalentProfile } from "../talent-selector"
 
 interface SimulationResultsPanelProps {
   selectedTalent?: TalentProfile
@@ -204,12 +204,7 @@ const mockMetrics = [
   { label: "Market Value", current: 1.2, projected: 2.1, unit: "M USD" },
 ]
 
-export function SimulationResultsPanel({
-  selectedTalent,
-  onTalentChange,
-  files,
-  onFilesChange,
-}: SimulationResultsPanelProps) {
+export function SimulationResultsPanel({ files }: SimulationResultsPanelProps) {
   const [activeScenario, setActiveScenario] = useState("scenario-1")
   const [simulationProgress, setSimulationProgress] = useState(100)
   const [isRunning, setIsRunning] = useState(false)
@@ -266,13 +261,6 @@ export function SimulationResultsPanel({
           </p>
         </div>
       )}
-
-      {/* Talent Context */}
-      <TalentSelector
-        selectedTalent={selectedTalent}
-        onTalentChange={onTalentChange}
-        onCreateNew={() => console.log("Create new talent")}
-      />
 
       {/* Enhanced Simulation Controls */}
       <div>

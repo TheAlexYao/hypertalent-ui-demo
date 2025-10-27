@@ -898,37 +898,54 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
   }
 
   const renderToolSpecificPanel = () => {
+    const { title, subtitle } = getTerminalTitle()
+    const header = (
+      <div className="bg-secondary/20 border border-border/50 rounded-lg px-5 py-4">
+        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+      </div>
+    )
+
     if (activeTool === "chat") {
       return (
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
+        <div className="space-y-4">
+          {header}
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">{renderToolResults()}</div>
+        </div>
       )
     }
 
     if (activeTool === "deal-hunter") {
       return (
-        <>
+        <div className="space-y-4">
+          {header}
           <div className="bg-secondary/20 border border-border/50 rounded-lg p-8 space-y-6">
             {renderDriveConnectionCard("deal-hunter", { showPrompt: true })}
           </div>
 
           {/* Tool-Specific Results Section */}
           <div className="border-border border-t-[0] pt-[0]">{renderToolResults()}</div>
-        </>
+        </div>
       )
     }
 
+    const hideTalentSelector = ["crawler", "gameplan", "simulation"].includes(activeTool)
+
     return (
-      <div className="space-y-6">
-        {/* Talent Selector Section */}
-        <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
-          <TalentSelector
-            selectedTalent={selectedTalent}
-            onTalentChange={setSelectedTalent}
-            onCreateNew={() => console.log("Create new talent")}
-            onStartDiscovery={handleStartDiscovery}
-            isDiscovering={isDiscovering}
-          />
-        </div>
+      <div className="space-y-4">
+        {header}
+
+        {!hideTalentSelector && (
+          <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">
+            <TalentSelector
+              selectedTalent={selectedTalent}
+              onTalentChange={setSelectedTalent}
+              onCreateNew={() => console.log("Create new talent")}
+              onStartDiscovery={handleStartDiscovery}
+              isDiscovering={isDiscovering}
+            />
+          </div>
+        )}
 
         {/* Drive Folder Section */}
         <div className="bg-secondary/20 border border-border/50 rounded-lg p-6">

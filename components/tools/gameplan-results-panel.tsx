@@ -194,12 +194,7 @@ const mockCampaignGoals = [
   "Customer Retention",
 ]
 
-export function GameplanResultsPanel({
-  selectedTalent,
-  onTalentChange,
-  files,
-  onFilesChange,
-}: GameplanResultsPanelProps) {
+export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
   const [campaignBudget, setCampaignBudget] = useState("")
   const [selectedGoals, setSelectedGoals] = useState<string[]>([])
   const [targetDemographic, setTargetDemographic] = useState("")

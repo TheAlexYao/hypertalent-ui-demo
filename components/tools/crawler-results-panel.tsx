@@ -164,12 +164,7 @@ const mockSources = [
   },
 ]
 
-export function CrawlerResultsPanel({
-  selectedTalent,
-  onTalentChange,
-  files,
-  onFilesChange,
-}: CrawlerResultsPanelProps) {
+export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
   const [activeTab, setActiveTab] = useState<"opportunities" | "sources" | "dossiers">("opportunities")
   const [filterUrgency, setFilterUrgency] = useState<string>("all")
   const [scanProgress, setScanProgress] = useState(mockScanningStatus.progress)
