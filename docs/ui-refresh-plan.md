@@ -45,11 +45,9 @@
 - `components/deal-card.tsx` & related card renderers
 - Shared UI tokens in `components/ui` and `app/globals.css`
 
-## Open Questions / Clarifications Needed
-1. **Color values:** What exact hex codes should we use for the “pale yellow,” “pale green,” and “pale red” states in the Web Crawler?
-2. **AI Chat scope:** When we “separate AI chat as simple chat-only” do we remove file upload hooks entirely or just hide them visually in the chat tab?
-3. **Card adjustments coverage:** Should the taller card layout and bottom-aligned buttons apply only to crawler/deal cards, or to all cards across the app (e.g., Deal Evaluation, Game Plan X outcomes)?
-4. **Single-column target width:** For Web Crawler/Game Plan X/Simulation, do we want to match Deal Hunter’s exact padding/margins, or adopt a different max-width?
-5. **Medium-risk contrast:** Are there brand guidelines for the updated medium-risk color, or should we propose one based on accessibility checks?
-
-Please confirm these points so we can proceed with detailed implementation.
+## Decisions & Clarifications
+- **Web Crawler palette:** We will propose new pale yellow/green/red tokens that fit the existing system and meet contrast guidelines, then wire them into the crawler status visuals.
+- **AI Chat:** Keep the current layout; confirm there are no document-upload affordances in that tab and hide any stray context UI if found.
+- **Card updates:** Apply taller layout, bottom-aligned buttons, and increased metric sizing to all card-based surfaces (Deal Hunter, Game Plan X, Simulation, Crawler).
+- **Single-column layout:** Web Crawler, Game Plan X, and Simulation should mirror Deal Hunter’s single-column structure and spacing exactly.
+- **Medium-risk contrast:** Select an accessible color variant during implementation (no existing guideline provided).
