@@ -269,8 +269,8 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
               </div>
             </div>
 
-            <Button className="w-full">
-              <Target className="w-4 h-4 mr-2" />
+            <Button variant="cta" className="gap-2 self-start">
+              <Target className="w-4 h-4" />
               Find Matching Opportunities
             </Button>
           </div>
@@ -378,12 +378,12 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
                   <span>{listing.applications} applications</span>
                 </div>
 
-                <div className="mt-auto flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1 gap-2 border-border/60 bg-transparent hover:bg-border/20">
+                <div className="mt-auto flex flex-wrap gap-2">
+                  <Button variant="cta" size="sm" className="gap-2">
                     <Handshake className="w-3 h-3" />
                     Apply Anonymously
                   </Button>
-                  <Button size="sm" className="flex-1 gap-2 bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90">
+                  <Button variant="cta" size="sm" className="gap-2">
                     <Zap className="w-3 h-3" />
                     Request Details
                   </Button>
@@ -431,11 +431,11 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
                   <p>Confidence: {Math.round(pkg.confidence * 100)}%</p>
                 </div>
 
-                <div className="mt-auto flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1 border-border/60 bg-transparent hover:bg-border/20">
+                <div className="mt-auto flex flex-wrap gap-2">
+                  <Button variant="cta" size="sm">
                     View Details
                   </Button>
-                  <Button size="sm" className="flex-1 bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90">
+                  <Button variant="cta" size="sm">
                     Generate Proposal
                   </Button>
                 </div>
@@ -512,7 +512,7 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
                     </div>
                   </div>
 
-                  <Button variant="outline" size="sm" className="w-full gap-2 bg-transparent">
+                  <Button variant="cta" size="sm" className="gap-2 self-start">
                     <Calendar className="w-3 h-3" />
                     Schedule Venue Tour
                   </Button>

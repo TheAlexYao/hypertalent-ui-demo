@@ -186,22 +186,12 @@ export function DealCard({ deal, onViewDetails, onGenerateOutreach, linkedStepId
       </div>
 
       <div className="mt-auto space-y-3">
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onViewDetails(deal)}
-            className="flex-1 gap-2 border-border/60 bg-transparent hover:bg-border/20"
-          >
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2">
+          <Button variant="cta" size="sm" onClick={() => onViewDetails(deal)} className="gap-2">
             <Eye className="w-4 h-4" />
             View Details
           </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => onGenerateOutreach(deal)}
-            className="flex-1 gap-2 bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90"
-          >
+          <Button variant="cta" size="sm" onClick={() => onGenerateOutreach(deal)} className="gap-2">
             <Mail className="w-4 h-4" />
             Generate Outreach
           </Button>

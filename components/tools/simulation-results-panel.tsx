@@ -291,7 +291,7 @@ export function SimulationResultsPanel({ files }: SimulationResultsPanelProps) {
                 <Progress value={simulationProgress} className="h-2" />
               </div>
             )}
-            <Button onClick={runSimulation} disabled={isRunning} className="w-full gap-2">
+            <Button onClick={runSimulation} disabled={isRunning} variant="cta" className="gap-2 self-start">
               {isRunning ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
               {isRunning ? "Running Advanced Simulation..." : "Run Quantum Simulation"}
             </Button>

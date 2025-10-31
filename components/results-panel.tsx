@@ -676,8 +676,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                         <span>{searchError || statusMessage || "Discovery failed. Please retry."}</span>
                       </div>
                       <Button
-                        variant="outline"
+                        variant="cta"
                         size="sm"
+                        className="self-start"
                         onClick={handleStartDiscovery}
                         disabled={isDiscovering}
                       >
@@ -811,7 +812,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                   asChild
                   variant="outline"
                   size="sm"
-                  className="border-white/40 bg-transparent text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40 active:bg-white/90 active:text-black active:border-white/70"
+                  className="border-white/40 bg-transparent text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40 active:bg-white/90 active:text-black active:border-white/70 min-w-[150px] max-w-[250px]"
                 >
                   <a href={driveLink} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="w-4 h-4" />
@@ -821,7 +822,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-white/40 bg-transparent text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40 active:bg-white/90 active:text-black active:border-white/70"
+                  className="border-white/40 bg-transparent text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40 active:bg-white/90 active:text-black active:border-white/70 min-w-[150px] max-w-[250px]"
                   onClick={() => {
                     setDriveLinkInput(driveLink)
                     setDriveLinkError("")
@@ -869,8 +870,9 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                 <Button
                   onClick={handleStartDiscovery}
                   disabled={isDiscovering}
-                  className="w-full gap-2 bg-[#AE94FB] hover:bg-[#9B7EF7] text-black font-medium"
+                  variant="cta"
                   size="sm"
+                  className="gap-2 self-start"
                 >
                   <Zap className="w-4 h-4" />
                   {isDiscovering ? "Discovering..." : "Start Discovery"}
