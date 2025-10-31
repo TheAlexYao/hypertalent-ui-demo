@@ -48,6 +48,12 @@ const quickPrompts = [
   "Develop a content strategy for Q1 campaigns",
 ]
 
+const getToggleButtonClasses = (isActive: boolean) =>
+  cn(
+    "border transition-colors shadow-none hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40",
+    isActive ? "bg-white/90 text-black border-white/70" : "bg-transparent text-muted-foreground border-white/40",
+  )
+
 const mockDocuments = [
   {
     id: "doc-1",
@@ -255,18 +261,16 @@ export function ChatResultsPanel({ files }: ChatResultsPanelProps) {
           <h4 className="text-sm font-semibold text-foreground">AI Assistant</h4>
           {activeTabMeta && <p className="text-xs text-muted-foreground">{activeTabMeta.description}</p>}
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col gap-2">
           {tabOptions.map((tab) => (
             <Button
               key={tab.id}
               type="button"
               size="sm"
-              variant={activeTab === tab.id ? "default" : "ghost"}
+              variant="outline"
               className={cn(
-                "w-full justify-center rounded-lg border border-border/40 text-xs font-medium",
-                activeTab === tab.id
-                  ? "bg-[var(--primary)] text-black hover:bg-[var(--primary)]/90"
-                  : "bg-background/60 text-muted-foreground hover:bg-background/80",
+                getToggleButtonClasses(activeTab === tab.id),
+                "w-full justify-start rounded-lg text-xs font-medium",
               )}
               onClick={() => setActiveTab(tab.id)}
             >
@@ -280,20 +284,20 @@ export function ChatResultsPanel({ files }: ChatResultsPanelProps) {
 
       <div className="space-y-2 border-t border-border/30 pt-3">
         <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Document Generation</h4>
-        <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" size="sm" className="justify-start gap-2 bg-transparent">
+        <div className="flex flex-col gap-2">
+          <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-transparent">
             <MessageSquare className="h-3 w-3" />
             Draft Email
           </Button>
-          <Button variant="outline" size="sm" className="justify-start gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-transparent">
             <FileText className="h-3 w-3" />
             Create Proposal
           </Button>
-          <Button variant="outline" size="sm" className="justify-start gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-transparent">
             <Users className="h-3 w-3" />
             Schedule Meeting
           </Button>
-          <Button variant="outline" size="sm" className="justify-start gap-2 bg-transparent">
+          <Button variant="outline" size="sm" className="w-full justify-start gap-2 bg-transparent">
             <Calendar className="h-3 w-3" />
             Set Reminder
           </Button>
