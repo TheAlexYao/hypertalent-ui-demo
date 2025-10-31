@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
+import { cn } from "@/lib/utils"
 import {
   Target,
   TrendingUp,
@@ -194,6 +195,12 @@ const mockCampaignGoals = [
   "Customer Retention",
 ]
 
+const getToggleButtonClasses = (isActive: boolean) =>
+  cn(
+    "border transition-colors shadow-none hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40",
+    isActive ? "bg-white/90 text-black border-white/70" : "bg-transparent text-muted-foreground border-white/40",
+  )
+
 export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
   const [campaignBudget, setCampaignBudget] = useState("")
   const [selectedGoals, setSelectedGoals] = useState<string[]>([])
@@ -255,17 +262,20 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
             <div>
               <label className="text-sm font-medium mb-2 block">Partnership Goals</label>
               <div className="flex flex-wrap gap-2">
-                {mockCampaignGoals.map((goal) => (
-                  <Button
-                    key={goal}
-                    variant={selectedGoals.includes(goal) ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => toggleGoal(goal)}
-                    className="text-xs"
-                  >
-                    {goal}
-                  </Button>
-                ))}
+                {mockCampaignGoals.map((goal) => {
+                  const isSelected = selectedGoals.includes(goal)
+                  return (
+                    <Button
+                      key={goal}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => toggleGoal(goal)}
+                      className={cn(getToggleButtonClasses(isSelected), "px-3 text-xs")}
+                    >
+                      {goal}
+                    </Button>
+                  )
+                })}
               </div>
             </div>
 
@@ -283,27 +293,35 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
           <h4 className="text-sm font-medium">B2B Marketplace</h4>
           <div className="flex gap-1">
             <Button
-              variant={activeTab === "marketplace" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "marketplace"), "px-3")}
               onClick={() => setActiveTab("marketplace")}
             >
               Marketplace
             </Button>
             <Button
-              variant={activeTab === "packages" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "packages"), "px-3")}
               onClick={() => setActiveTab("packages")}
             >
               Packages
             </Button>
             <Button
-              variant={activeTab === "venues" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "venues"), "px-3")}
               onClick={() => setActiveTab("venues")}
             >
               Venues
             </Button>
-            <Button variant={activeTab === "roi" ? "default" : "ghost"} size="sm" onClick={() => setActiveTab("roi")}>
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "roi"), "px-3")}
+              onClick={() => setActiveTab("roi")}
+            >
               ROI Models
             </Button>
           </div>

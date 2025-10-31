@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { cn } from "@/lib/utils"
 import {
   BarChart3,
   TrendingUp,
@@ -204,6 +205,12 @@ const mockMetrics = [
   { label: "Market Value", current: 1.2, projected: 2.1, unit: "M USD" },
 ]
 
+const getToggleButtonClasses = (isActive: boolean) =>
+  cn(
+    "border transition-colors shadow-none hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40",
+    isActive ? "bg-white/90 text-black border-white/70" : "bg-transparent text-muted-foreground border-white/40",
+  )
+
 export function SimulationResultsPanel({ files }: SimulationResultsPanelProps) {
   const [activeScenario, setActiveScenario] = useState("scenario-1")
   const [simulationProgress, setSimulationProgress] = useState(100)
@@ -305,29 +312,33 @@ export function SimulationResultsPanel({ files }: SimulationResultsPanelProps) {
           <h4 className="text-sm font-medium">Forecasting Engine</h4>
           <div className="flex gap-1">
             <Button
-              variant={activeTab === "dual-path" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "dual-path"), "px-3")}
               onClick={() => setActiveTab("dual-path")}
             >
               Dual-Path
             </Button>
             <Button
-              variant={activeTab === "scenarios" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "scenarios"), "px-3")}
               onClick={() => setActiveTab("scenarios")}
             >
               Scenarios
             </Button>
             <Button
-              variant={activeTab === "media-scoring" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "media-scoring"), "px-3")}
               onClick={() => setActiveTab("media-scoring")}
             >
               Media Scoring
             </Button>
             <Button
-              variant={activeTab === "projections" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "projections"), "px-3")}
               onClick={() => setActiveTab("projections")}
             >
               Projections
