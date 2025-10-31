@@ -23,22 +23,17 @@ export function ChatSidebar({
   onFilesChange,
 }: ChatSidebarProps) {
   return (
-    <div className="flex h-full flex-col gap-3">
-      <Card className="rounded-xl border border-border/40 bg-background/70 px-4 py-3">
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{subtitle}</p>
-      </Card>
-
-      <Card className="flex-1 overflow-hidden rounded-xl border border-border/40 bg-background/60">
-        <div className="h-full overflow-y-auto p-4">
-          <ChatResultsPanel
-            selectedTalent={selectedTalent}
-            onTalentChange={onTalentChange}
-            files={files}
-            onFilesChange={onFilesChange}
-          />
-        </div>
-      </Card>
-    </div>
+    <Card className="flex-1 overflow-hidden rounded-2xl border border-border/40 bg-background/60">
+      <div className="h-full overflow-y-auto p-4">
+        <ChatResultsPanel
+          title={title}
+          subtitle={subtitle}
+          selectedTalent={selectedTalent}
+          onTalentChange={onTalentChange}
+          files={files}
+          onFilesChange={onFilesChange}
+        />
+      </div>
+    </Card>
   )
 }

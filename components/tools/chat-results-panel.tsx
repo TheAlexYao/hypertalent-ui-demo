@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils"
 import type { UploadedFile } from "../file-upload-zone"
 
 interface ChatResultsPanelProps {
+  title?: string
+  subtitle?: string
   selectedTalent?: any
   onTalentChange: (talent: any) => void
   files: UploadedFile[]
@@ -166,7 +168,7 @@ const tabOptions: Array<{ id: ChatTab; label: string; description: string; icon:
   },
 ]
 
-export function ChatResultsPanel({ files }: ChatResultsPanelProps) {
+export function ChatResultsPanel({ files, title, subtitle }: ChatResultsPanelProps) {
   const [activeTab, setActiveTab] = useState<ChatTab>("prompts")
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -301,6 +303,9 @@ export function ChatResultsPanel({ files }: ChatResultsPanelProps) {
     }
   }
 
+  const panelTitle = title ?? "AI Assistant"
+  const panelSubtitle = subtitle ?? "Curate prompts, documents, and insights from ongoing collaborations."
+
   return (
     <div className="flex h-full flex-col gap-4">
       {files.length > 0 && (
@@ -312,33 +317,30 @@ export function ChatResultsPanel({ files }: ChatResultsPanelProps) {
       )}
 
       <div className="space-y-3">
-        <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-foreground">AI Assistant</h4>
-          <p className="text-xs text-muted-foreground">Curate prompts, documents, and insights from ongoing collaborations.</p>
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm font-semibold text-foreground">{panelTitle}</h4>
+          {panelSubtitle && <p className="text-xs text-muted-foreground">{panelSubtitle}</p>}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
           {tabOptions.map((tab) => {
             const Icon = tab.icon
-            const count = tabCounts[tab.id]
+            const isActive = activeTab === tab.id
             return (
               <Button
                 key={tab.id}
                 type="button"
-                size="sm"
+                size="icon"
+                aria-label={tab.label}
                 variant="outline"
                 className={cn(
-                  getToggleButtonClasses(activeTab === tab.id),
-                  "w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-medium",
+                  getToggleButtonClasses(isActive),
+                  "h-9 w-9 min-w-9 justify-start px-2 transition-all",
+                  isActive && "w-auto min-w-[auto] gap-2 px-3",
                 )}
                 onClick={() => setActiveTab(tab.id)}
               >
-                <span className="flex items-center gap-2">
-                  <Icon className="h-3.5 w-3.5" />
-                  {tab.label}
-                </span>
-                <Badge variant="secondary" className="text-[10px]">
-                  {count}
-                </Badge>
+                <Icon className="h-4 w-4" />
+                <span className={cn("text-xs font-medium", isActive ? "inline" : "sr-only")}>{tab.label}</span>
               </Button>
             )
           })}
@@ -346,12 +348,12 @@ export function ChatResultsPanel({ files }: ChatResultsPanelProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto pr-1">
-        <div className="rounded-xl border border-border/40 bg-background/70 p-3 space-y-3">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h5 className="text-sm font-semibold text-foreground">{activeTabMeta?.label}</h5>
+        <div className="space-y-2 rounded-xl border border-border/40 bg-background/70 p-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-1">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">{activeTabMeta?.label}</p>
               {activeTabMeta?.description && (
-                <p className="text-xs text-muted-foreground">{activeTabMeta.description}</p>
+                <p className="text-xs text-muted-foreground/80">{activeTabMeta.description}</p>
               )}
             </div>
             <Badge variant="outline" className="text-[10px] uppercase tracking-wide">
