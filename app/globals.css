@@ -38,8 +38,8 @@
   --sidebar-accent-foreground: #e5e5e5;
   --sidebar-border: #262626;
   --sidebar-ring: #ffffff;
-  --status-crawler-positive: #b8f5d1;
-  --status-crawler-positive-foreground: #0f3d26;
+  --status-crawler-positive: #d9fbe9;
+  --status-crawler-positive-foreground: #1f7a54;
   --status-crawler-warning: #fcebbb;
   --status-crawler-warning-foreground: #4d3401;
   --status-crawler-negative: #f8d0d0;
@@ -82,8 +82,8 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.275 0 0);
   --sidebar-ring: oklch(0.439 0 0);
-  --status-crawler-positive: #b8f5d1;
-  --status-crawler-positive-foreground: #0f3d26;
+  --status-crawler-positive: #d9fbe9;
+  --status-crawler-positive-foreground: #1f7a54;
   --status-crawler-warning: #fcebbb;
   --status-crawler-warning-foreground: #4d3401;
   --status-crawler-negative: #f8d0d0;

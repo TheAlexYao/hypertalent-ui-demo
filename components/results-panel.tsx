@@ -807,7 +807,12 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                 {driveLink}
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button asChild variant="outline" size="sm">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="border-white/40 bg-transparent text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40 active:bg-white/90 active:text-black active:border-white/70"
+                >
                   <a href={driveLink} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="w-4 h-4" />
                     Open Folder
@@ -816,6 +821,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                 <Button
                   variant="outline"
                   size="sm"
+                  className="border-white/40 bg-transparent text-muted-foreground hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40 active:bg-white/90 active:text-black active:border-white/70"
                   onClick={() => {
                     setDriveLinkInput(driveLink)
                     setDriveLinkError("")
@@ -884,6 +890,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
             </div>
             <Button
               size="sm"
+              variant="cta"
               onClick={() => {
                 setDriveLinkInput("")
                 setDriveLinkError("")

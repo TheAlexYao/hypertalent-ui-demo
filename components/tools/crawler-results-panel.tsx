@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { cn } from "@/lib/utils"
 import {
   Globe,
   TrendingUp,
@@ -217,6 +218,14 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
     }
   }
 
+  const getToggleButtonClasses = (isActive: boolean) =>
+    cn(
+      "border transition-colors shadow-none hover:border-primary hover:bg-primary hover:text-primary-foreground focus-visible:border-primary focus-visible:ring-primary/40",
+      isActive
+        ? "bg-white/90 text-black border-white/70"
+        : "bg-transparent text-muted-foreground border-white/40",
+    )
+
   return (
     <div className="space-y-5">
       {/* File Context Indicator */}
@@ -310,22 +319,25 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
           <h4 className="text-sm font-medium">Market Intelligence</h4>
           <div className="flex gap-1">
             <Button
-              variant={activeTab === "opportunities" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "opportunities"), "px-3")}
               onClick={() => setActiveTab("opportunities")}
             >
               Opportunities
             </Button>
             <Button
-              variant={activeTab === "dossiers" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "dossiers"), "px-3")}
               onClick={() => setActiveTab("dossiers")}
             >
               Brand Dossiers
             </Button>
             <Button
-              variant={activeTab === "sources" ? "default" : "ghost"}
+              variant="outline"
               size="sm"
+              className={cn(getToggleButtonClasses(activeTab === "sources"), "px-3")}
               onClick={() => setActiveTab("sources")}
             >
               Sources
@@ -339,22 +351,25 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-muted-foreground" />
               <Button
-                variant={filterUrgency === "all" ? "default" : "ghost"}
+                variant="outline"
                 size="sm"
+                className={cn(getToggleButtonClasses(filterUrgency === "all"), "px-3")}
                 onClick={() => setFilterUrgency("all")}
               >
                 All
               </Button>
               <Button
-                variant={filterUrgency === "high" ? "default" : "ghost"}
+                variant="outline"
                 size="sm"
+                className={cn(getToggleButtonClasses(filterUrgency === "high"), "px-3")}
                 onClick={() => setFilterUrgency("high")}
               >
                 High Priority
               </Button>
               <Button
-                variant={filterUrgency === "medium" ? "default" : "ghost"}
+                variant="outline"
                 size="sm"
+                className={cn(getToggleButtonClasses(filterUrgency === "medium"), "px-3")}
                 onClick={() => setFilterUrgency("medium")}
               >
                 Medium
@@ -395,18 +410,18 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
                       </span>
                       <div>
                         <p className="text-xs uppercase text-muted-foreground tracking-wide">Sentiment</p>
-                        <span className={`text-2xl font-semibold ${getSentimentTone(opp.sentiment)}`}>
+                        <span className={`text-3xl font-semibold leading-tight ${getSentimentTone(opp.sentiment)}`}>
                           {Math.round(opp.sentiment * 100)}%
                         </span>
                       </div>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-muted-foreground tracking-wide">Est. Value</p>
-                      <span className="text-lg font-semibold text-foreground">{opp.estimatedValue}</span>
+                      <span className="text-3xl font-semibold leading-tight text-foreground">{opp.estimatedValue}</span>
                     </div>
                     <div>
                       <p className="text-xs uppercase text-muted-foreground tracking-wide">Confidence</p>
-                      <span className="text-lg font-semibold text-[var(--status-medium)]">
+                      <span className="text-3xl font-semibold leading-tight text-[var(--status-medium)]">
                         {Math.round(opp.confidence * 100)}%
                       </span>
                     </div>
@@ -440,11 +455,7 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
                     <span>Due {new Date(opp.deadline).toLocaleDateString()}</span>
                   </div>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-auto w-full gap-2 border-border/60 bg-transparent hover:bg-border/20"
-                  >
+                  <Button variant="cta" size="sm" className="mt-auto self-start gap-2">
                     <Eye className="w-3 h-3" />
                     View Brand Dossier
                   </Button>
