@@ -279,10 +279,12 @@ export function GameplanResultsPanel({ files }: GameplanResultsPanelProps) {
               </div>
             </div>
 
-            <Button variant="cta" className="gap-2 self-start">
-              <Target className="w-4 h-4" />
-              Find Matching Opportunities
-            </Button>
+            <div className="flex justify-center w-full">
+              <Button variant="cta" size="lg" className="gap-2 w-full max-w-md">
+                <Target className="w-4 h-4" />
+                Find Matching Opportunities
+              </Button>
+            </div>
           </div>
         </Card>
       </div>

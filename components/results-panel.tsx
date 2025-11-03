@@ -867,16 +867,18 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
                   </p>
                 </div>
 
-                <Button
-                  onClick={handleStartDiscovery}
-                  disabled={isDiscovering}
-                  variant="cta"
-                  size="sm"
-                  className="gap-2 self-start"
-                >
-                  <Zap className="w-4 h-4" />
-                  {isDiscovering ? "Discovering..." : "Start Discovery"}
-                </Button>
+                <div className="flex justify-center w-full">
+                  <Button
+                    onClick={handleStartDiscovery}
+                    disabled={isDiscovering}
+                    variant="cta"
+                    size="lg"
+                    className="gap-2 w-full max-w-md"
+                  >
+                    <Zap className="w-4 h-4" />
+                    {isDiscovering ? "Discovering..." : "Start Discovery"}
+                  </Button>
+                </div>
               </>
             ) : (
               <p className="text-xs text-muted-foreground">

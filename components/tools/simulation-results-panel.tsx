@@ -298,10 +298,12 @@ export function SimulationResultsPanel({ files }: SimulationResultsPanelProps) {
                 <Progress value={simulationProgress} className="h-2" />
               </div>
             )}
-            <Button onClick={runSimulation} disabled={isRunning} variant="cta" className="gap-2 self-start">
-              {isRunning ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-              {isRunning ? "Running Advanced Simulation..." : "Run Quantum Simulation"}
-            </Button>
+            <div className="flex justify-center w-full">
+              <Button onClick={runSimulation} disabled={isRunning} variant="cta" size="lg" className="gap-2 w-full max-w-md">
+                {isRunning ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                {isRunning ? "Running Advanced Simulation..." : "Run Quantum Simulation"}
+              </Button>
+            </div>
           </div>
         </Card>
       </div>

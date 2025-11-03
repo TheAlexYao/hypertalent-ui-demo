@@ -187,9 +187,14 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
   )
 
   const getSentimentTone = (sentiment: number) => {
-    if (sentiment >= 0.8) return "text-[var(--status-crawler-positive-foreground)]"
+    if (sentiment >= 0.8) return "text-[#B240B6]"
     if (sentiment >= 0.6) return "text-[var(--status-medium)]"
     return "text-[var(--status-crawler-negative-foreground)]"
+  }
+
+  const getConfidenceTone = (confidence: number) => {
+    if (confidence >= 0.9) return "text-[#FB8CFF]"
+    return "text-[var(--status-medium)]"
   }
 
   const getUrgencyBadgeClasses = (urgency: string) => {
@@ -421,7 +426,7 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
                     </div>
                     <div>
                       <p className="text-xs uppercase text-muted-foreground tracking-wide">Confidence</p>
-                      <span className="text-3xl font-semibold leading-tight text-[var(--status-medium)]">
+                      <span className={`text-3xl font-semibold leading-tight ${getConfidenceTone(opp.confidence)}`}>
                         {Math.round(opp.confidence * 100)}%
                       </span>
                     </div>
