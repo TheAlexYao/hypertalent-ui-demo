@@ -888,7 +888,7 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-xs text-destructive">
+            <div className="flex items-center justify-center gap-2 text-xs text-destructive">
               <AlertCircle className="w-3 h-3" />
               <span>Connect a Google Drive folder before running {displayName}.</span>
             </div>
