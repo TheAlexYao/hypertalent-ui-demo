@@ -892,17 +892,20 @@ export function ResultsPanel({ activeTool, sharedFiles = [], onSharedFilesChange
               <AlertCircle className="w-3 h-3" />
               <span>Connect a Google Drive folder before running {displayName}.</span>
             </div>
-            <Button
-              size="sm"
-              variant="cta"
-              onClick={() => {
-                setDriveLinkInput("")
-                setDriveLinkError("")
-                setIsDriveModalOpen(true)
-              }}
-            >
-              Add Folder
-            </Button>
+            <div className="flex justify-center w-full">
+              <Button
+                size="lg"
+                variant="cta"
+                className="w-full max-w-md"
+                onClick={() => {
+                  setDriveLinkInput("")
+                  setDriveLinkError("")
+                  setIsDriveModalOpen(true)
+                }}
+              >
+                Add Folder
+              </Button>
+            </div>
           </div>
         )}
       </Card>
