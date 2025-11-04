@@ -187,14 +187,11 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
   )
 
   const getSentimentTone = (sentiment: number) => {
-    if (sentiment >= 0.8) return "text-[#B240B6]"
-    if (sentiment >= 0.6) return "text-[var(--status-medium)]"
-    return "text-[var(--status-crawler-negative-foreground)]"
+    return "text-[#B240B6]"
   }
 
   const getConfidenceTone = (confidence: number) => {
-    if (confidence >= 0.9) return "text-[#FB8CFF]"
-    return "text-[var(--status-medium)]"
+    return "text-[#FB8CFF]"
   }
 
   const getUrgencyBadgeClasses = (urgency: string) => {
@@ -276,7 +273,7 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
           </div>
           <div>
             <p className="text-xs text-muted-foreground">New Opportunities</p>
-            <span className="text-3xl font-semibold text-[var(--status-crawler-positive-foreground)]">
+            <span className="text-3xl font-semibold text-muted-foreground">
               {mockScanningStatus.newOpportunities}
             </span>
           </div>
@@ -439,15 +436,15 @@ export function CrawlerResultsPanel({ files }: CrawlerResultsPanelProps) {
                     </div>
                     <div className="flex h-1.5 overflow-hidden rounded-full">
                       <span
-                        className="bg-[var(--status-crawler-positive)]"
+                        className="bg-[#B240B6]"
                         style={{ width: `${opp.sentimentBreakdown.positive * 100}%` }}
                       />
                       <span
-                        className="bg-[var(--status-crawler-warning)]"
+                        className="bg-gray-500"
                         style={{ width: `${opp.sentimentBreakdown.neutral * 100}%` }}
                       />
                       <span
-                        className="bg-[var(--status-crawler-negative)]"
+                        className="bg-[#FB8CFF]"
                         style={{ width: `${opp.sentimentBreakdown.negative * 100}%` }}
                       />
                     </div>
